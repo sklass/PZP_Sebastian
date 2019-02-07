@@ -106,17 +106,19 @@ public class Main {
             }
             //Alle zeilen zwischen erster und letzter
             for (int l = 0; l < laenge - dicke*2; l++) {
-                //Rahmen ausgeben
+
                 //links
                 //For Schleife für Rand dicke links
                 for(int dl = 0; dl < dicke; dl++) {
                     System.out.print("#");
                 }
+                //For Schleife für Füllung
                 for (int bb = 0; bb < breite - dicke*2; bb++) {
                     //Füllung ausgeben
                     System.out.print(filler);
                 }
                 //Rechts
+                //For Schleife für Rahmen rechts
                 for(int dr= 0; dr < dicke; dr++) {
                     System.out.print("#");
                 }
