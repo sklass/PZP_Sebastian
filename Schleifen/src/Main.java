@@ -94,8 +94,9 @@ public class Main {
 
             //Ausgabe des Rechtecks
             //Oberer Rand
-            //Erste For Schleife läuft mind. einmal durch
+            //Erste For Schleife für Rand dicke
             for(int d = 0 ; d < dicke; d++) {
+                //Zweite Schleife für breite
                 for (int b = 0; b < breite; b++) {
                     System.out.print("#");
                     if (b == breite - 1) {
@@ -107,6 +108,7 @@ public class Main {
             for (int l = 0; l < laenge - dicke*2; l++) {
                 //Rahmen ausgeben
                 //links
+                //For Schleife für Rand dicke links
                 for(int dl = 0; dl < dicke; dl++) {
                     System.out.print("#");
                 }
