@@ -15,7 +15,12 @@ public class Main {
 
             boolean istPrimzahl = true;
 
-            for(int teiler = 2; teiler < zahl && istPrimzahl; teiler++){
+            //Schleife zählt von 2 bis aktuelle Zahl aus oberer Schleife
+            //
+            if((zahl % 2) == 0) {
+                System.out.println(zahl);
+            }
+            for(int teiler = 2; teiler < zahl && (zahl % 2) == 0 && istPrimzahl ; teiler++){
                 if((zahl % teiler) == 0){
                     istPrimzahl = false;
                 }
