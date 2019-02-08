@@ -11,7 +11,7 @@ public class Main {
     static int form;
     static char ausrichtung;
     static int kantenlaenge;
-    static int inhalt;
+    static int zahl;
 
 
     public static void main(String[] args) {
@@ -185,7 +185,7 @@ public class Main {
 
     static void zeichneRechteck(){
         //Ausgabe des Rechtecks
-        inhalt = 1;
+        zahl = 1;
         //Oberer Rand
         //Erste For Schleife für Rand rahmen
         for(int d = 0 ; d < rahmen; d++) {
@@ -212,7 +212,7 @@ public class Main {
                     System.out.print(filler);
                 }
                 if(fill == 2){
-                    System.out.print(inhalt);
+                    System.out.print(zahl);
                 }
             }
             //Rechts
@@ -221,9 +221,9 @@ public class Main {
                 System.out.print("#");
             }
             System.out.print("\n");
-            inhalt++;
-            if(inhalt == 10){
-                inhalt = 0;
+            zahl++;
+            if(zahl == 10){
+                zahl = 0;
             }
         }
         //letzte Zeile ausgeben
@@ -239,7 +239,7 @@ public class Main {
 
     static void zeichneDreieck(){
         System.out.println("Dreieck");
-        inhalt = 1;
+        zahl = 1;
         int abstand = 0;
         int reihenlaenge = 1;
         for(int d = 0; d < kantenlaenge; d++){
@@ -265,14 +265,14 @@ public class Main {
                     System.out.print(filler);
                 }
                 if(fill == 2) {
-                    System.out.print(inhalt);
+                    System.out.print(zahl);
                 }
             }
             System.out.println();
             reihenlaenge++;
-            inhalt++;
-            if(inhalt > 9){
-                inhalt = 0;
+            zahl++;
+            if(zahl > 9){
+                zahl = 0;
             }
 
         }
