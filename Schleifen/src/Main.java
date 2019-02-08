@@ -5,9 +5,14 @@ public class Main {
     static Scanner Eingabe = new Scanner(System.in);
     static int laenge;
     static int breite;
-    static int dicke;
+    static int rahmen;
+    static int fill;
     static char filler;
     static int form;
+    static char ausrichtung;
+    static int kantenlaenge;
+    static int inhalt;
+
 
     public static void main(String[] args) {
         boolean keep_running = true;
@@ -15,13 +20,26 @@ public class Main {
         willkommen();
         //Schleife um Programm mehrfach ausführen zu können
         while(keep_running == true) {
-            //benutzereingaben abfragen
-            userInput();
-            //Zusammenfassung der eingegebenen Daten
-            System.out.println("Erzeuge Rechteck mit \nBreite: " + breite + "\nLänge: " + laenge + "\nRahmendicke: " + dicke + "\n" );
-            //Ausgabe des Rechtecks
-            zeichneRechteck();
-            //Abfrage ob programm erneut ausgeführt werden soll über methode "nochmalAusfuehren"
+            //benutzereingaben
+             form_abfragen();
+            //Rechteck
+            if(form == 1){
+                laengeAbfragen();
+                breiteAbfragen();
+                rahmenAbfragen();
+                fuellung_abfragen();
+                //Zusammenfassung der eingegebenen Daten
+                //System.out.println("Erzeuge Rechteck mit \nBreite: " + breite + "\nLänge: " + laenge + "\nRahmen: " + rahmen + "\n" );
+                zeichneRechteck();
+             //Dreieck
+            }else if(form == 2){
+
+                ausrichtungAbfragen();
+                kantenlaengeAbfragen();
+                fuellung_abfragen();
+                zeichneDreieck();
+            }
+
             keep_running = nochmalAusfuehren();
         }
         wiedersehen();
@@ -31,11 +49,10 @@ public class Main {
         System.out.println("Willkommen");
     }
 
-    static void userInput(){
-        laengeAbfragen();
-        breiteAbfragen();
-        rahmenAbfragen();
-        fuellung_abfragen();
+    static void form_abfragen(){
+        System.out.println("Rechteck = 1 oder Dreieck = 2?");
+        while (!Eingabe.hasNextInt()) Eingabe.next();
+        form = Eingabe.nextInt();
     }
 
     static void laengeAbfragen(){
@@ -65,71 +82,113 @@ public class Main {
         //Solange erneut abfragen bis gültiger Wert eingegeben wurde
         while(breite < 2) {
             System.out.println("Die Breite muss mindestens 2 betragen\n");
+            while (!Eingabe.hasNextInt()) Eingabe.next();
             breite = Eingabe.nextInt();
         }
     }
 
     static void fuellung_abfragen(){
-        if(laenge > 2 && breite > 2 && breite > dicke*2 && laenge > dicke*2) {
+        if(laenge > 2 && breite > 2 && breite > rahmen*2 && laenge > rahmen*2 || form == 2) {
             //Abfrage ob Rechteck gefüllt werden soll
-            System.out.println("Rechteck ausgefüllt = 1 - Rechteck nicht ausgeüllt = 0");
+
+            if(form == 1 ) { //Rechteck
+                if(rahmen > 1) {
+                    System.out.println("Rechteck nicht ausgeüllt = 0 - Rechteck mit Zeichen ausgefüllt = 1 - Rechteck aus Zahlen = 2");
+                }else{
+                    System.out.println("Rechteck mit Zeichen ausgefüllt = 1 - Rechteck aus Zahlen = 2");
+                }
+
+            }
+            if(form == 2) { //Dreieck
+                System.out.println("Dreieck mit Zeichen ausgefüllt = 1 - Dreieck aus Zahlen = 2");
+            }
 
             //Sicherstellen das ein Integer Wert eingegeben wurde. wird etwas anderes eingegeben wird erneut gefragt
             while (!Eingabe.hasNextInt()) Eingabe.next();
-            int fill = Eingabe.nextInt();
+            fill = Eingabe.nextInt();
 
-            //Wenn Rechteck gefüllt werden soll
+            if(form == 1 && fill == 0 && rahmen > 0){
+                System.out.println("Das Rechteck wird nicht gefüllt\n");
+                filler = ' ';
+            }
             if (fill == 1) {
                 //Zeichen zum füllen des Rechtecks abfragen
                 System.out.println("Welches Zeichen soll zur Füllung genutzt werden");
                 //Nur das erste eingegebene Zeichen wird als Füller verwendet
                 filler = Eingabe.next().charAt(0);
-            } else {
-                System.out.println("Das Rechteck wird nicht gefüllt\n");
-                filler = ' ';
             }
+            if(fill == 2){
+                System.out.println("Form wird aus Zahlen erzeugt");
+            }
+
         }else{
             System.out.println("Kein Platz im Rechteck um mit einem anderen Zeichen gefüllt zu werden");
         }
     }
 
     static void rahmenAbfragen(){
-        //Rahmendicke abfragen wenn laenge und breite größer 2
+        //Rahmenrahmen abfragen wenn laenge und breite größer 2
         if(laenge > 2 && breite > 2){
             System.out.println("Bitte Rahmendicke des Rechtecks eingeben");
 
             //Sicherstellen das ein Integer Wert eingegeben wurde. wird etwas anderes eingegeben wird erneut gefragt
             while (!Eingabe.hasNextInt()) Eingabe.next();
-            dicke = Eingabe.nextInt();
+            rahmen = Eingabe.nextInt();
 
             //Solange erneut abfragen bis gültiger Wert eingegeben wurde
-            // Rahmendicke mind. 1 und maximal hälfte von höhe und breite
-            while(dicke*2 > laenge || dicke*2 > breite || dicke < 1){
+            // Rahmenrahmen mind. 1 und maximal hälfte von höhe und breite
+            while(rahmen*2 > laenge || rahmen*2 > breite || rahmen < 0){
                 System.out.println("Fehlerhafte Eingabe!!!\n");
-                if(dicke < 1){
-                    System.out.println("Rahmendicke muss mindestens 1 betragen");
+                if(rahmen < 0){
+                    System.out.println("Rahmendicke darf nicht negativ sein");
                 }
-                if(dicke*2 > laenge){
-                    System.out.println("Rahmendicke " + dicke + "*2  > Höhe " + laenge + "\nRahmendicke kann max. die hälfte der Rechteckhöhe betragen");
+
+                if(rahmen*2 > laenge){
+                    System.out.println("Rahmenrahmen " + rahmen + "*2  > Höhe " + laenge + "\nRahmenrahmen kann max. die hälfte der Rechteckhöhe betragen");
                 }
-                if(dicke*2 > breite){
-                    System.out.println("Rahmendicke " + dicke + "*2  > Breite " + breite + "\nRahmendicke kann max. die hälfte der Rechteckbreite betragen");
+                if(rahmen*2 > breite){
+                    System.out.println("Rahmenrahmen " + rahmen + "*2  > Breite " + breite + "\nRahmenrahmen kann max. die hälfte der Rechteckbreite betragen");
                 }
                 System.out.println("Bitte Rahmendicke des Rechtecks eingeben");
 
                 //Sicherstellen das ein Integer Wert eingegeben wurde. wird etwas anderes eingegeben wird erneut gefragt
                 while (!Eingabe.hasNextInt()) Eingabe.next();
-                dicke = Eingabe.nextInt();
+                rahmen = Eingabe.nextInt();
             }
         }
     }
 
+    static void ausrichtungAbfragen(){
+        System.out.println("Ausrichtung - L/M/R");
+        ausrichtung = Eingabe.next().charAt(0);
+        boolean gueltig = false;
+        while( gueltig == false ){
+            if(ausrichtung == 'l' || ausrichtung == 'L' || ausrichtung == 'm' || ausrichtung == 'M' || ausrichtung == 'r' || ausrichtung == 'R'){
+                gueltig = true;
+            }else {
+                System.out.println("Ausrichtung - L/M/R");
+                ausrichtung = Eingabe.next().charAt(0);
+            }
+        }
+    }
+
+    static void kantenlaengeAbfragen(){
+        System.out.println("Kantenlänge?");
+        while (!Eingabe.hasNextInt()) Eingabe.next();
+        kantenlaenge = Eingabe.nextInt();
+        while(kantenlaenge < 3){
+            System.out.println("Kantenlänge zu klein, bitte größer wählen");
+            kantenlaenge = Eingabe.nextInt();
+        }
+    }
+
+
     static void zeichneRechteck(){
         //Ausgabe des Rechtecks
-
+        inhalt = 1;
         //Oberer Rand
-        //Erste For Schleife für Rand dicke
-        for(int d = 0 ; d < dicke; d++) {
+        //Erste For Schleife für Rand rahmen
+        for(int d = 0 ; d < rahmen; d++) {
             //Zweite Schleife für breite
             for (int b = 0; b < breite; b++) {
                 System.out.print("#");
@@ -139,27 +198,36 @@ public class Main {
             }
         }
         //Alle zeilen zwischen erster und letzter
-        for (int l = 0; l < laenge - dicke*2; l++) {
+        for (int l = 0; l < laenge - rahmen*2; l++) {
 
             //links
-            //For Schleife für Rand dicke links
-            for(int dl = 0; dl < dicke; dl++) {
+            //For Schleife für Rand rahmen links
+            for(int dl = 0; dl < rahmen; dl++) {
                 System.out.print("#");
             }
             //For Schleife für Füllung
-            for (int bb = 0; bb < breite - dicke*2; bb++) {
+            for (int bb = 0; bb < breite - rahmen*2; bb++) {
                 //Füllung ausgeben
-                System.out.print(filler);
+                if(fill == 0 || fill == 1 ) {
+                    System.out.print(filler);
+                }
+                if(fill == 2){
+                    System.out.print(inhalt);
+                }
             }
             //Rechts
             //For Schleife für Rahmen rechts
-            for(int dr= 0; dr < dicke; dr++) {
+            for(int dr= 0; dr < rahmen; dr++) {
                 System.out.print("#");
             }
             System.out.print("\n");
+            inhalt++;
+            if(inhalt == 10){
+                inhalt = 0;
+            }
         }
         //letzte Zeile ausgeben
-        for(int d = 0 ; d < dicke; d++) {
+        for(int d = 0 ; d < rahmen; d++) {
             for (int b = 0; b < breite; b++) {
                 System.out.print("#");
                 if (b == breite - 1) {
@@ -169,10 +237,51 @@ public class Main {
         }
     }
 
+    static void zeichneDreieck(){
+        System.out.println("Dreieck");
+        inhalt = 1;
+        int abstand = 0;
+        int reihenlaenge = 1;
+        for(int d = 0; d < kantenlaenge; d++){
+
+
+            if(ausrichtung == 'R' || ausrichtung == 'r') {
+                //Leerzeichen einfügen für rechtsausrichtung
+                //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
+                abstand = kantenlaenge-reihenlaenge;
+            }
+            if(ausrichtung == 'M' || ausrichtung == 'm') {
+                //Leerzeichen einfügen für rechtsausrichtung
+                //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
+                abstand = (kantenlaenge-reihenlaenge)/2;
+            }
+            for(int a = abstand; a > 0; a--){
+                System.out.print(" ");
+            }
+
+            for(int i = 0; i < reihenlaenge; i++ ) {
+                //Abhängig von ausgewählter Füllung, entsprechende Zeichen ausgeben
+                if(fill == 1) {
+                    System.out.print(filler);
+                }
+                if(fill == 2) {
+                    System.out.print(inhalt);
+                }
+            }
+            System.out.println();
+            reihenlaenge++;
+            inhalt++;
+            if(inhalt > 9){
+                inhalt = 0;
+            }
+
+        }
+    }
+
     static boolean nochmalAusfuehren(){
         Scanner Eingabe = new Scanner(System.in);
         //Abfrage ob Programm erneut ausgeführt werden soll
-        System.out.println("\nMöchtest du ein weiteres Rechteck zeichnen? (1 = Ja / 0 = Nein)");
+        System.out.println("\nMöchtest du noch etwas zeichnen? (1 = Ja / 0 = Nein)");
 
         //Sicherstellen das ein Integer Wert eingegeben wurde. wird etwas anderes eingegeben wird erneut gefragt
         while (!Eingabe.hasNextInt()) Eingabe.next();

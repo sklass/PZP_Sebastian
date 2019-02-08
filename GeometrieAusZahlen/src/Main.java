@@ -1,4 +1,4 @@
-import java.sql.SQLOutput;
+
 import java.util.Scanner;
 public class Main {
     //Deklaration
@@ -6,8 +6,9 @@ public class Main {
     static int form;
     static int hoehe;
     static int breite;
-    static int inhalt = 1;
     static int kantenlaenge;
+    static char ausrichtung;
+    static int inhalt = 1;
 
     public static void main(String[] args) {
 
@@ -18,7 +19,12 @@ public class Main {
             zeichneRechteck();
         }else if(form == 2){
             System.out.println("Ausrichtung - L/M/R");
-            zeichneDreieck_links();
+            ausrichtung = Eingabe.next().charAt(0);
+       //     if(ausrichtung == 'M' || ausrichtung == 'm') {
+        //        zeichneDreieck_mittig();
+         //   }else {
+                zeichneDreieck();
+          //  }
         }
     }
     static void zeichneRechteck(){
@@ -39,12 +45,31 @@ public class Main {
             }
         }
     }
-    static void zeichneDreieck_links(){
+    static void zeichneDreieck(){
         System.out.println("Kantenlänge?");
         kantenlaenge = Eingabe.nextInt();
 
+        int abstand = 0;
         int reihenlaenge = 1;
         for(int d = 0; d < kantenlaenge; d++){
+
+
+            if(ausrichtung == 'R' || ausrichtung == 'r') {
+                //Leerzeichen einfügen für rechtsausrichtung
+                //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
+                abstand = kantenlaenge-reihenlaenge;
+            }
+            if(ausrichtung == 'M' || ausrichtung == 'm') {
+                //Leerzeichen einfügen für rechtsausrichtung
+                //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
+                abstand = (kantenlaenge-reihenlaenge)/2;
+            }
+                for(int a = abstand; a > 0; a--){
+                    System.out.print(" ");
+                }
+
+
+
             for(int i = 0; i < reihenlaenge; i++ ) {
                 System.out.print(inhalt);
             }
@@ -63,10 +88,59 @@ public class Main {
         kantenlaenge = Eingabe.nextInt();
 
         int reihenlaenge = 1;
+        //int abstandshalter = 0;
+        //Höhe des Dreiecks
         for(int d = 0; d < kantenlaenge; d++){
+
+            //Leerzeichen einfügen für rechtsausrichtung
+           int abstand = kantenlaenge-reihenlaenge;
+            for(int a = abstand; a > 0; a--){
+                System.out.print(" ");
+            }
+            //Reihenlänge der auszugebenden Zahlen
             for(int i = 0; i < reihenlaenge; i++ ) {
                 System.out.print(inhalt);
             }
+            System.out.println();
+            reihenlaenge++;
+            inhalt++;
+            if(inhalt > 9){
+                inhalt = 0;
+            }
+
+        }
+    }
+
+    static void zeichneDreieck_mittig(){
+        System.out.println("Kantenlänge?");
+        kantenlaenge = Eingabe.nextInt();
+
+        int reihenlaenge = 1;
+        int abstand ;
+
+        //int abstandshalter = 0;
+        //Anzahl Zeilen des Dreiecks
+        for(int d = 0; d < kantenlaenge; d++){
+
+            abstand = ((kantenlaenge-reihenlaenge)/2);
+            /*
+            if(((kantenlaenge-reihenlaenge) % 2) == 1){
+                //System.out.print("ungerade");
+                abstand = ((kantenlaenge-reihenlaenge)/2);
+            }else{
+                abstand = ((kantenlaenge-reihenlaenge)/2);
+
+            }
+            */
+
+            for(int a = abstand; a > 0; a--){
+                System.out.print(" ");
+            }
+            //Reihenlänge der auszugebenden Zahlen
+            for(int i = 0; i < reihenlaenge; i++ ) {
+                System.out.print(inhalt);
+            }
+            System.out.print("    abstand: " + abstand);
             System.out.println();
             reihenlaenge++;
             inhalt++;
