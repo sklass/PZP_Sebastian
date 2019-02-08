@@ -15,7 +15,7 @@ public class Main {
 
 
             for (int nenner = 1; nenner <= zaehler; nenner++ )
-            if( zaehler % nenner == 0){
+            if( (zaehler % nenner) == 0){
                 System.out.println("Keine Primzahl" + zaehler + ":" + nenner);
             }else{
                 System.out.println("Primzahl" + zaehler + ":" + nenner);
