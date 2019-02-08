@@ -1,0 +1,16 @@
+Programme Installieren                
+ 
+1. - Deaktivieren Sie das Internet.
+2. - Installieren Sie das Programm.
+3. - Starten Sie das Programm.
+4. - Geben Sie die folgenden Informationen ein:
+
+Name:  Beliebig
+License Key : PM3A-3VPT-3IV6-Q5KK-4U4F   
+
+5. - Starten Sie es. Sie können jetzt das Internet aktivieren.
+
+CCleaner 5.52 Build 6967 Professional / Business / Technician
+Defraggler 2.22.995 Professional 
+Recuva 1.53.1087 Professional 
+Speccy 1.32.740 Professional
