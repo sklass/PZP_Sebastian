@@ -102,7 +102,7 @@ public class mitdreieck {
             //Dreieck
             if(form == 2){
                 //Kantenlänge abfragen,
-                System.out.println("Bitte Kantenlänge des Rechtecks eingeben");
+                System.out.println("Bitte Kantenlänge des Dreiecks eingeben");
 
                 //Sicherstellen das ein Integer Wert eingegeben wurde. wird etwas anderes eingegeben wird erneut gefragt
                 while (!Eingabe.hasNextInt()) Eingabe.next();
