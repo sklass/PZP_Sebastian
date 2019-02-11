@@ -248,12 +248,12 @@ public class Main {
             if(ausrichtung == 'R' || ausrichtung == 'r') {
                 //Leerzeichen einfügen für rechtsausrichtung
                 //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
-                abstand = kantenlaenge-reihenlaenge;
+                abstand = kantenlaenge*2-reihenlaenge*2;
             }
             if(ausrichtung == 'M' || ausrichtung == 'm') {
                 //Leerzeichen einfügen für rechtsausrichtung
                 //for (int abstand = kantenlaenge - reihenlaenge; abstand > 0; abstand--) {
-                abstand = (kantenlaenge-reihenlaenge)/2;
+                abstand = (kantenlaenge-reihenlaenge);
             }
             for(int a = abstand; a > 0; a--){
                 System.out.print(" ");
@@ -262,10 +262,10 @@ public class Main {
             for(int i = 0; i < reihenlaenge; i++ ) {
                 //Abhängig von ausgewählter Füllung, entsprechende Zeichen ausgeben
                 if(fill == 1) {
-                    System.out.print(filler);
+                    System.out.print(filler + " ");
                 }
                 if(fill == 2) {
-                    System.out.print(zahl);
+                    System.out.print(zahl + " ");
                 }
             }
             System.out.println();
