@@ -60,7 +60,7 @@ public class Main {
                 int y = Eingabe.nextInt();
                 System.out.println("Feld? (1,2,3)");
                 int x = Eingabe.nextInt();
-                int koordinaten =
+                int[] koordinaten;
                 zuege ++;
             }
 
