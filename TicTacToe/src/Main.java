@@ -1,37 +1,56 @@
 import java.util.Scanner;
 
 public class Main {
-    static int feldY = 1;          // Zähler für die Anzahl der Reihen
-    static int feldX = 1;          // Zähler für Felder in einer Reihe
-    static int anzahlFelderX = 3;  // Vorgabe wie viele ausfüllbare Felder es pro Reihe geben soll
-    static int anzahlFelderY = 3;  // Vorgabe wie viele ausfüllbare Reihen es geben soll
-    static int anzahlReihen = 0;   // Zähler für Anzahl aller vorhandenen Reihen
-    static int spieler = 0;        // Spieler 1 oder 2 ist dran
-    static char filler= ' ';       // Variable für X bzw O, jenachdem wer dran ist
-    static int zuege = 1;          // Zähler für die Anzahl der Spielzüge
-    static boolean winner = false;
-    static boolean nochmal = true;
+    static int feldY;         // Zähler für die Anzahl der Reihen
+    static int feldX;         // Zähler für Felder in einer Reihe
+    static int anzahlFelderX;// Vorgabe wie viele ausfüllbare Felder es pro Reihe geben soll
+    static int anzahlFelderY; // Vorgabe wie viele ausfüllbare Reihen es geben soll
+    static int anzahlReihen;  // Zähler für Anzahl aller vorhandenen Reihen
+    static int spieler;       // Spieler 1 oder 2 ist dran
+    static char filler;       // Variable für X bzw O, jenachdem wer dran ist
+    static int zuege;         // Zähler für die Anzahl der Spielzüge
+    static boolean winner;    // Ist true wenn ein spieler gewonnen hat
+    static Scanner Eingabe = new Scanner(System.in);
     // 2D Array indem alle von Spielern gesetzten Zeichen gespeichert werden
     //wird zunächst mit leerzeichen initialisiert
-    static char [][] koordinaten = {
-            {' ', ' ', ' ', ' '},
-            {' ', ' ', ' ', ' '},
-            {' ', ' ', ' ', ' '},
-            {' ', ' ', ' ', ' '}
-    };
+    static char [][] koordinaten;
 
     public static void main(String[] args) {
-
-        //Solange kein gewinner
-        while(winner == false){
-            zeichneSpielfeld();
-            zeigeStatus();
-            spielerEingabe();
-            ermittleGewinner();
-            zuege ++;
-            checkUnentschieden();
-        }
+        playTicTacToe();
     }
+
+     static void playTicTacToe(){
+        initTicTacToe();
+        //Solange kein gewinner
+         while(winner == false){
+             zeichneSpielfeld();
+             zeigeStatus();
+             spielerEingabe();
+             ermittleGewinner();
+             zuege ++;
+             checkUnentschieden();
+         }
+         nochmal();
+     }
+        static void initTicTacToe(){
+           feldY = 1;          // Zähler für die Anzahl der Reihen
+           feldX = 1;          // Zähler für Felder in einer Reihe
+           anzahlFelderX = 3;  // Vorgabe wie viele ausfüllbare Felder es pro Reihe geben soll
+           anzahlFelderY = 3;  // Vorgabe wie viele ausfüllbare Reihen es geben soll
+           anzahlReihen = 0;   // Zähler für Anzahl aller vorhandenen Reihen
+           spieler = 0;        // Spieler 1 oder 2 ist dran
+           filler= ' ';       // Variable für X bzw O, jenachdem wer dran ist
+           zuege = 1;          // Zähler für die Anzahl der Spielzüge
+           winner = false;
+            // 2D Array indem alle von Spielern gesetzten Zeichen gespeichert werden
+            //wird zunächst mit leerzeichen initialisiert
+             koordinaten = new char[][] {
+                    {' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' '},
+                    {' ', ' ', ' ', ' '}
+            };
+        }
 
         static void zeichneSpielfeld(){
             //Zähler für Felder auf der Y Achse auf 1 zurücksetzen
@@ -82,7 +101,7 @@ public class Main {
         }
 
         static void spielerEingabe(){
-            Scanner Eingabe = new Scanner(System.in);
+
             System.out.println("Bitte gib die koordinaten des zu befüllenden Feldes ein");
             System.out.println("Reihe? (1,2,3)");
             int y = Eingabe.nextInt();
@@ -144,6 +163,20 @@ public class Main {
                 winner = true;
                 zeichneSpielfeld();
             }
+        }
+
+        static void nochmal(){
+            System.out.println("Revanche? Ja/Nein");
+            String nochmal = Eingabe.next();
+
+            if(nochmal.equalsIgnoreCase("ja")){
+                zuege = 0;
+                winner = false;
+                playTicTacToe();
+            }else{
+                System.out.println("Bye");
+            }
+
         }
 
 }
