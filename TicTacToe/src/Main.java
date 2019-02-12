@@ -85,8 +85,8 @@ public class Main {
         }
 
         static void zeigeStatus(){
-            System.out.println();
-            System.out.println("Spielzug: " + zuege);
+            //System.out.println();
+            //System.out.println("Spielzug: " + zuege);
             // Welcher Spieler ist an der Reihe?
             if(zuege % 2 == 1){
                 System.out.println("Spieler 1 ist dran (O)");
@@ -117,7 +117,8 @@ public class Main {
                     valid = true;
                     koordinaten[y][x] = filler;
                 }else{
-                    System.out.println("Das Feld ist voll!");
+                    System.out.println("Das Feld in Reihe " + y +" Feld " + x + " ist voll!");
+                    zeichneSpielfeld();
                     System.out.println("Reihe? (1,2,3)");
                     y = Eingabe.nextInt();
                     System.out.println("Feld? (1,2,3)");
