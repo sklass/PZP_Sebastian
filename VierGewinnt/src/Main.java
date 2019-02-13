@@ -203,11 +203,11 @@ class VierGewinnt {
             newMove(x);           //das zeichen des Spielers ins coordinate array eintragen
             generateBoard();        //das Spielfeld inkl. der zeichen aus dem coordinates array erzeugen
             printBoard();           //das Spielfeld ausgeben
-            winner = checkWinner(); //prüfen obe jemand gewonnen hat und den Rückgabewert in winner speichern
+            winner = checkWinner2(); //prüfen obe jemand gewonnen hat und den Rückgabewert in winner speichern
         }
     }
 
-    private void initCoordinates(){
+    private void initCoordinates(){         //Methode um alle Felder des Koordinaten Arrays mit ' ' zu befüllen
         for(int y = 1; y <= sizeY; y++){
             for(int x = 1; x <= sizeX; x++){
                 coordinates[y][x] = ' ';
@@ -215,105 +215,94 @@ class VierGewinnt {
         }
     }
 
-    private void generateBoard(){
+    private void generateBoard(){           //Methode zum Generieren des Spielfelds in Form des Arrays board
         for(int y = 1; y <= sizeY; y++){
             for(int x = 1; x <= sizeX; x++){
-                board[y][x] = "[ " + coordinates[y][x] + " ]";
+                board[y][x] = "[ " + coordinates[y][x] + " ]"; //Alle ggf. gesetzten Spielsteine werden hier bereits eingetragen
             }
         }
     }
 
-    private void printBoard(){
+    private void printBoard(){              //Methode zur Ausgabe des Spielfelds in der Konsole
+        System.out.println("  1    2    3    4    5    6    7  "); //Spaltennummern ausgeben
         for(int y = 1; y <= sizeY; y++){
             for(int x = 1; x <= sizeX; x++){
-                System.out.print(board[y][x]);
+                System.out.print(board[y][x]);                      //Alle Felder ausgeben
             }
-            System.out.println();
+            System.out.println();                                   //Zeilenumbruch nach jeder Reihe
         }
     }
-    private void printErrors(){
+    private void printErrors(){         //Bisher eher nutzlose funktion TODO
         System.out.println(ErrorMsg);
     }
 
-    private void askForColumn(){
-        x = 0;
-        y = 0;
-
-        int[] validInputX = new int[sizeX+1];
+    private void askForColumn(){        //Mehtode zur Abfrage der Spalte bei einem Spielzug
+        x = 0; y = 0;
+        int[] validInputX = new int[sizeX+1]; //Anzahl der gültigen Eingaben festlegen (sizeX+1 da array immer bei null beginnt, die schleife aber bei 1 starten muss)
         for (int i = 1; i <= sizeX; i++) {
-            validInputX[i] = i;
+            validInputX[i] = i;               //Alle gültigen Zahlen per Schleife ins Array schreiben
         }
-        while(x == 0) {
-            x = getUserInput("Bitte gib die Spaltennummer ein (1-7):", validInputX);
-            if(coordinates[1][x] != ' '){
-                System.out.println("Spalte " + x + " ist bereits voll");
-                x=0;
+        while(x == 0) {                                                                         //solange x null ist
+            x = getUserInput("Bitte gib die Spaltennummer ein (1-7):", validInputX);   //Frage Spieler nach Spaltennummer
+            if(coordinates[1][x] != ' '){                                                       //wenn oberste Zeile einer spalte nicht leer
+                System.out.println("Spalte " + x + " ist bereits voll");                        //gib fehlermeldung aus
+                x=0;                                                                            //und setze x wieder auf null
             }
         }
     }
 
-    private void newMove (int X){
-        if(moves %2 == 1){
-            player = player1;
-        }else player = player2;
+    private void newMove (int X){           //Methode um den Spielzug eines Spielers ins Koordinaten Array einzutragen. Spalte des zu setzenden Steins wird als X übergeben
+        if(moves %2 == 1){                  //Festellen ob Anzahl Züge gerade oder ungerade
+            player = player1;               //Ungerade = Spieler 1
+        }else player = player2;             // Gerade = Spieler 2
 
-        for(int i = sizeY; i > 0; i--){
-            if(coordinates[i][X] == ' '){
-                coordinates[i][X] = player;
-                moves++;
-                break;
+        for(int i = sizeY; i > 0; i--){     //Schleife zählt von max.höhe des Spielfelds runter bis auf 1. Falls schon ein Spielstein in der Spalte ist, wird der nächste darüber platziert
+            if(coordinates[i][X] == ' '){   //Ist der Eintrag im Koordianten Array leer
+                coordinates[i][X] = player; //Wird das Zeichen des Spieler eingetragen
+                moves++;                    //Anzahl Spielzüge +1
+                break;                      //Schleife unterbrechen
             }
         }
-
     }
 
-    private char checkWinner(){
-        //Prüfung ob es einen Gewinner gibt
-        //Schleife für vier waagerechte
-
+    private char checkWinner(){  //Methode zur Prüfung ob es einen Gewinner gibt
         int Points = 0;
 
-        //waagerecht
-        for(int y = sizeY; y > 0; y--){
-            for(int x = 1; x < sizeX+1; x++){
-                if(coordinates[y][x] == player){
-                    Points++;
+        for(int y = sizeY; y > 0; y--){             //Schleife für vier waagerechte
+            for(int x = 1; x < sizeX+1; x++){       //Prüft Reiheweise jedes Feld
+                if(coordinates[y][x] == player){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                    Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
                 }
-                if(coordinates[y][x] != player){
-                    Points = 0;
+                if(coordinates[y][x] != player){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                    Points = 0;                     // Punktezähler wieder auf 0 srtzen
                 }
-                //System.out.print(Points);
-                if(Points == 4 ){
-                    return player;
+
+                if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
+                    return player;                  // Gibt die Schleife den Gewinner zurück
                 }
             }
         }
         //Senkrecht
         Points = 0;
-        for(int x = sizeX; x > 0; x--){
-            for(int y = 1; y < sizeY+1; y++){
-                if(coordinates[y][x] == player){
-                    Points++;
+        for(int x = sizeX; x > 0; x--){             //Schleife für vier waagerechte
+            for(int y = 1; y < sizeY+1; y++){       //Prüft Reiheweise jedes Feld
+                if(coordinates[y][x] == player){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                    Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
                 }
-                if(coordinates[y][x] != player){
-                    Points = 0;
+                if(coordinates[y][x] != player){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                    Points = 0;                     // Punktezähler wieder auf 0 srtzen
                 }
                 //System.out.print(Points);
-                if(Points == 4 ){
-                    return player;
+                if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
+                    return player;                  // Gibt die Schleife den Gewinner zurück
                 }
             }
         }
 
+
+
 /*
-        //Schleife für drei senkrechte
-        for(int x = 1; x <= 3; x++){
-            int y = 1;
-            if(coordinates[y][x] == player && coordinates[y+1][x] == player && coordinates[y+2][x] == player){
-                //System.out.println("Spieler " + player + " hat gewonnen");
-                return player;
-            }
-        }
+
         //3 von oben links nach unten rechts
         if(coordinates[1][1] == player && coordinates[2][2] == player && coordinates[3][3] == player){
             //System.out.println("Spieler " + player + " hat gewonnen");
@@ -328,6 +317,75 @@ class VierGewinnt {
         return ' ';
     }
 
+    private char checkWinner2(){  //Methode zur Prüfung ob es einen Gewinner gibt
+        int Points = 0;
+        //int DiagPoints = 0;
+
+        for(int y = sizeY; y > 0; y--){             //Schleife für vier waagerechte
+            for(int x = 1; x < sizeX+1; x++){       //Prüft Reiheweise jedes Feld
+                if(coordinates[y][x] == player){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                    Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
+                }
+                if(coordinates[y][x] != player){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                    Points = 0;                     // Punktezähler wieder auf 0 srtzen
+                }
+
+                if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
+                    return player;                  // Gibt die Schleife den Gewinner zurück
+                }
+            }
+        }
+        //Senkrecht
+        Points = 0;
+        for(int x = sizeX; x > 0; x--){             //Schleife für vier waagerechte
+            for(int y = 1; y < sizeY+1; y++){       //Prüft Reiheweise jedes Feld
+                if(coordinates[y][x] == player){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                    Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
+                }
+                if(coordinates[y][x] != player){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                    Points = 0;                     // Punktezähler wieder auf 0 srtzen
+                }
+                //System.out.print(Points);
+                if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
+                    return player;                  // Gibt die Schleife den Gewinner zurück
+                }
+            }
+        }
+        Points = 0;
+        int x = 1;
+        for(int y = sizeY; y > 0; y--){             //Schleife für vier dieagonale links nach rechts TODO!!!!!!
+            System.out.println("X: " + x);
+            System.out.println("Y: " + y);
+                if(coordinates[y][x] == player){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                    Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
+                }
+                if(coordinates[y][x] != player){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                    Points = 0;                     // Punktezähler wieder auf 0 srtzen
+                }
+
+                if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
+                    return player;                  // Gibt die Schleife den Gewinner zurück
+                }
+                x++;
+                if(x == sizeY) x = 1;
+            }
+
+
+/*
+
+        //3 von oben links nach unten rechts
+        if(coordinates[1][1] == player && coordinates[2][2] == player && coordinates[3][3] == player){
+            //System.out.println("Spieler " + player + " hat gewonnen");
+            return player;
+        }
+        //3 von oben rechts nach unten links
+        if(coordinates[1][3] == player && coordinates[2][2] == player && coordinates[3][1] == player){
+            //System.out.println("Spieler " + player + " hat gewonnen");
+            return player;
+        }
+        */
+        return ' ';
+    }
 
     private int getUserInput(String Question, int[] validAnswers){
         Scanner Eingabe = new Scanner(System.in);
