@@ -171,8 +171,8 @@ class TicTacToe {
 class VierGewinnt{
     char player1 = 'X';
     char player2 = 'O';
-    int sizeX = 3;
-    int sizeY = 3;
+    int sizeX = 7;
+    int sizeY = 6;
     int x;
     int y;
     char[][] coordinates = new char[sizeY+1][sizeX+1];
