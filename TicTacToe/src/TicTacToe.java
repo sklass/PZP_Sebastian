@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Main {
+public class TicTacToe {
     static int feldY;         // Zähler für die Anzahl der Reihen
     static int feldX;         // Zähler für Felder in einer Reihe
     static int anzahlFelderX;// Vorgabe wie viele ausfüllbare Felder es pro Reihe geben soll
@@ -103,11 +103,35 @@ public class Main {
         static void spielerEingabe(){
 
             System.out.println("Bitte gib die koordinaten des zu befüllenden Feldes ein");
-            System.out.println("Reihe? (1,2,3)");
-            int y = Eingabe.nextInt();
-            System.out.println("Feld? (1,2,3)");
-            int x = Eingabe.nextInt();
+            //Sicherstellen das y 1-3 ist
+            int y = 0;
+            while(y < 1 || y > 3) {
+                if(y < 1 || y > 3){
+                    System.out.println("Bitte nur Zahlen zwischen 1 und 3 eingeben!");
+                }
+                System.out.println("Reihe?");
+                //Solange kein Int eingegeben wird, Erneut abfragen
+                while (!Eingabe.hasNextInt()) {
+                    System.out.println("Bitte nur Zahlen von 1-3 eingebn");
+                    Eingabe.next();
+                } //Ansonsten INT in variable speichern
+                y = Eingabe.nextInt();
+            }
 
+            //Sicherstellen das X 1-3 ist
+            int x = 0;
+            while(x < 1 || x > 3) {
+                if(x < 1 || x > 3){
+                    System.out.println("Bitte nur Zahlen zwischen 1 und 3 eingeben!");
+                }
+                System.out.println("Feld?");
+                //Solange kein Int eingegeben wird, Erneut abfragen
+                while (!Eingabe.hasNextInt()) {
+                    System.out.println("Bitte nur Zahlen von 1-3 eingebn");
+                    Eingabe.next();
+                } //Ansonsten INT in variable speichern
+                x = Eingabe.nextInt();
+            }
 
             //Position für X/O prüfen und abspeichern oder erneut abfragen
             boolean valid = false;
