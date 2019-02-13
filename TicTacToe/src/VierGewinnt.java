@@ -19,6 +19,9 @@ public class VierGewinnt {
     static char [][] koordinaten;
 
     public static void main(String[] args) {
+        selectGame();
+    }
+    static void selectGame(){
         spiel = 0;
         System.out.println("Was möchtest du Spielen");
         System.out.println("3 - TicTacToe");
@@ -33,7 +36,6 @@ public class VierGewinnt {
         }
         playGame();
     }
-
      static void playGame(){
         if (spiel == 3){
             initTicTacToe();
@@ -65,6 +67,7 @@ public class VierGewinnt {
         spieler = 0;        // Spieler 1 oder 2 ist dran
         filler= ' ';       // Variable für X bzw O, jenachdem wer dran ist
         zuege = 1;          // Zähler für die Anzahl der Spielzüge
+        zuegeLimit = 9;
         winner = false;
         // 2D Array indem alle von Spielern gesetzten Zeichen gespeichert werden
         //wird zunächst mit leerzeichen initialisiert
@@ -145,17 +148,17 @@ public class VierGewinnt {
 
         static void spielerEingabe(){
 
-            System.out.println("Bitte gib die koordinaten des zu befüllenden Feldes ein");
+            //System.out.println("Bitte gib die koordinaten des zu befüllenden Feldes ein");
             //Sicherstellen das y 1-anzahlFelderY ist
             int y = 0;
             while(y < 1 || y > anzahlFelderY) {
                 if(y < 1 || y > anzahlFelderY){
                     System.out.println("Bitte nur Zahlen zwischen 1 und " + anzahlFelderY + " eingeben!");
                 }
-                System.out.println("Reihe?");
+                System.out.println("Welche Reihe?");
                 //Solange kein Int eingegeben wird, Erneut abfragen
                 while (!Eingabe.hasNextInt()) {
-                    System.out.println("Bitte nur Zahlen von 1-3 eingebn");
+                    System.out.println("Bitte nur Zahlen zwischen 1 und " + anzahlFelderY + " eingeben!");
                     Eingabe.next();
                 } //Ansonsten INT in variable speichern
                 y = Eingabe.nextInt();
@@ -170,7 +173,7 @@ public class VierGewinnt {
                 System.out.println("Feld?");
                 //Solange kein Int eingegeben wird, Erneut abfragen
                 while (!Eingabe.hasNextInt()) {
-                    System.out.println("Bitte nur Zahlen von 1-3 eingebn");
+                    System.out.println("Bitte nur Zahlen zwischen 1 und " + anzahlFelderX + " eingeben!");
                     Eingabe.next();
                 } //Ansonsten INT in variable speichern
                 x = Eingabe.nextInt();
@@ -274,7 +277,7 @@ public class VierGewinnt {
             if(nochmal.equalsIgnoreCase("ja")){
                 zuege = 0;
                 winner = false;
-                playGame();
+                selectGame();
             }else{
                 System.out.println("Bye");
             }
