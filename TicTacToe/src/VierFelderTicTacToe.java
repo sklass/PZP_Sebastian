@@ -1,7 +1,7 @@
 
 import java.util.Scanner;
 
-public class VierGewinnt {
+public class VierFelderTicTacToe {
     static int feldY;         // Zähler für die Anzahl der Reihen
     static int feldX;         // Zähler für Felder in einer Reihe
     static int anzahlFelderX;// Vorgabe wie viele ausfüllbare Felder es pro Reihe geben soll
@@ -24,8 +24,8 @@ public class VierGewinnt {
     static void selectGame(){
         spiel = 0;
         System.out.println("Was möchtest du Spielen");
-        System.out.println("3 - TicTacToe");
-        System.out.println("4 - VierGewinnt");
+        System.out.println("3 - TicTacToe 3x3");
+        System.out.println("4 - TicTacToe 4x4");
         while(spiel != 3 && spiel != 4){
             System.out.println("Bitte 3 oder 4 eingeben");
             while(!Eingabe.hasNextInt()){
