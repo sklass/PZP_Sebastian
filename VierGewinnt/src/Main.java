@@ -3,11 +3,9 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-
             VierGewinnt MyGame = new VierGewinnt();
             MyGame.start();
     }
-
 }
 
 class VierGewinnt {
@@ -150,7 +148,7 @@ class VierGewinnt {
                     }
                 }
             }
-            Points = 0;
+            Points = 0; //Nach jeder Spalte wird der Punktezähler zurückgesetzt
         }
 
         //vier diagonale von links oben nach rechts unten
@@ -174,38 +172,39 @@ class VierGewinnt {
                     }
                 }
             }
-            Points = 0;
+            Points = 0; //Nach jeder Spalte wird der Punktezähler zurückgesetzt
         }
         return ' ';
     }
 
-    private int checkDraw(){
-        for(int y = 1; y <= 6; y++){
-            for(int x = 1; x <= 7; x++){
-                if (coordinates[y][x] == ' '){
-                    return 0;
+    private int checkDraw(){            //Methode zur Prüfung bo es noch freie felder auf dem spielfeld gibt
+        for(int y = 1; y <= 6; y++){    //Alle Zeilen
+            for(int x = 1; x <= 7; x++){    // Und alle Felder in der Reihe abarbeiten
+                if (coordinates[y][x] == ' '){ //Prüfen ob leer
+                    return 0;                   //Wenn leer, kein unentschieden
                 }
             }
         }
-        System.out.println("Unentschieden");
+        System.out.println("Unentschieden");    //Wenn kein leeres feld gefunden, unentschieden
         return 1;
     }
-    private int getUserInput(String Question, int[] validAnswers){
-        Scanner Eingabe = new Scanner(System.in);
-        System.out.println(Question);
-        while(!Eingabe.hasNextInt()){
+    //Methode um INT Eingaben zu vereinhetlichen
+    private int getUserInput(String Question, int[] validAnswers){  //erwartet eine Frage als String und ein array mit allen möglichen antworten
+        Scanner Eingabe = new Scanner(System.in);                   //Scanner init
+        System.out.println(Question);                               //Übergebene Frage ausgeben
+        while(!Eingabe.hasNextInt()){                               //Falls kein Int eingegeben wird
             System.out.println("Bitte nur Zahlen eingeben");
             Eingabe.next();
         }
-        int Answer = Eingabe.nextInt();
-        for(int valid: validAnswers)
+        int Answer = Eingabe.nextInt();                             //Int in Answer speichern
+        for(int valid: validAnswers)                                //Prüfen ob es sich um eine gültige Antwort handelt
         {
             if(Answer == valid) {
-                return Answer;
+                return Answer;                                      //Wenn gültig, antwort übergeben
             }
         }
         System.out.println("Bitte nur gültige Zahl eingeben");
-        return 0;
+        return 0;                                                   //wenn ungültig, 0 übergeben
     }
 }
 
