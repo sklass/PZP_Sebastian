@@ -158,8 +158,9 @@ class board {
         return coordinates;
     }
 
-    public void print(player player1, player player2){
-        System.out.println("  1    2    3    4    5    6    7  ");
+    public void print(player player1, player player2){                  //Spielfled ausgeben -> Player objekte müssen übergeben werden, damit die ID und das Symbol des Spielers bekannt sind
+        //System.out.println("  1    2    3    4    5    6    7  ");
+        System.out.println(printHeader());
         for(int y  = 1; y < this.rows+1; y++ ){
             for(int x  = 1; x < this.cols+1; x++ ){
                 System.out.print("[ ");
@@ -175,6 +176,15 @@ class board {
             System.out.println();
         }
     }
+
+    public String printHeader(){
+        String header = "";
+        for(int i = 1; i<=cols;i++ ){
+            header = header + "  " + i + "  ";
+        }
+        return header;
+    }
+
     public int askColumn(){
         userInput myInput = new userInput();
         int answer;
