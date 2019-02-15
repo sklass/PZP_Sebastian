@@ -4,76 +4,172 @@ public class Main {
 
     public static void main(String[] args) {
         FourWins MyGame = new FourWins(); //objekt vom Typ FourWins wird erzeugt
+        MyGame.start();
     }
 
 }
 class FourWins{
+    //Attribute der Klasse FourWins
+    //innerhalb der Klasse nutzbar
+    private player player1 = new player();
+    private player player2 = new player();
+    private player activePlayer = new player();
+    private board Board = new board();
+    private UserInterface Console = new UserInterface();
+    private player winner;
+    private String WinCondition;
+
+    public void start(){
+        GameStateHandler(1);
+    }
+
     //Constructor Methode beinhaltet den gesamten SPielablauf
-    public FourWins(){
-        board FourWinsBoard = new board();                                              //Spielfeld Objekt erzeugen
-        player player1 = new player(1, 'X', true);      //Spieler Objekte erzeugen
-        player player2 = new player(-1, 'O', false);
-        player activePlayer = (player1.active) ? player1 : player2;
+    public void GameStateHandler(int GameStatus){
 
-        FourWinsBoard.initialize();
+        while(GameStatus <=5){
+            switch(GameStatus){
+                case 1: //Spiel wird gestartet
+                        initGame();
+                    break;
+                case 2: //Spiel ist im Gange
+                        playGame();
+                    break;
+                case 3: //Ein Spieler hat gewonnen
+                        showWinner();
+                        showBoard();
+                        GameStatus = 5;
+                    break;
+                case 4: // Unentschieden
 
-        while((checkWinner(FourWinsBoard,activePlayer) == 0) && (checkDraw(FourWinsBoard) == false)) { //Schleife ausführen solange Kein Gewinner & kein Unentschiden
-            activePlayer = (player1.active) ? player1 : player2;                            //aktiven Spieler festlegen
+                    break;
+                case 5: //Nochmal spielen
+                       playAgain();
+                    break;
+                case 6: //Beenden
 
-            FourWinsBoard.print(player1, player2);                                          //Spielfeld ausgeben
-            System.out.println("Active Player: "+activePlayer.symbol);
-            FourWinsBoard.newMove(FourWinsBoard.askColumn(),activePlayer);                  //Neuen spielzug durchführen
-            togglePlayer( player1, player2);                                                //festlegen welcher spieler als nächstes dran ist
+                    break;
+            }
         }
-        FourWinsBoard.print(player1, player2);                                              //Nachdem das Spiel vorbei ist, nochmal das Spielfeld ausgeben
+
+
+
+
+        /*while((checkWinner(Board,activePlayer) == 0) && (checkDraw(Board) == false)) { //Schleife ausführen solange Kein Gewinner & kein Unentschiden
+            toggleActivePlayer(activePlayer);                            //aktiven Spieler festlegen
+
+            Board.print(player1, player2);                                          //Spielfeld ausgeben
+
+            Board.newMove(Board.askColumn(),activePlayer);                  //Neuen spielzug durchführen
+            //togglePlayer( player1, player2);                                                //festlegen welcher spieler als nächstes dran ist
+        }
+        Board.print(player1, player2);                                              //Nachdem das Spiel vorbei ist, nochmal das Spielfeld ausgeben
+        */
     }
 
-    private void togglePlayer(player player1, player player2){                              //Über die Methode wird nur der aktiv-Status des Spielers geändert
-                                                                                            //wer den nächsten Zug machen darf wird über die Eigenschaft active Player definniert
-        if(player1.active){
-            player1.active = false;
-            player2.active = true;
+    private void initGame(){
+        this.player1.setPlayerID(1);
+        this.player1.setPlayerSymbol('X');
+
+        //player player2 = new player();
+        this.player2.setPlayerID(-1);
+        this.player2.setPlayerSymbol('O');
+
+        this.Board.setSize(7,6);
+        this.Board.initialize(0);
+
+        GameStateHandler(2);
+    }
+
+    private void playGame(){
+        //Aktiven Spieler wechseln
+        toggleActivePlayer();
+        showBoard();
+        makeAMove();
+        checkWinner(Board.getRows(), Board.getCols(), Board.getCoordinates(), getActivePlayer());
+        checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates());
+    }
+
+    private void showBoard(){
+        //Spielfeld ausgeben
+        Console.printBoard(Board.getCols(),Board.getRows(),Board.getHeader(),Board.getCoordinates(), player1, player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
+    }
+
+    private void makeAMove(){
+        //Neuen Spielstein setzen
+        //Der User wird nach einer Spalte gefragt, Board Koordianten werden mit übergeben um zu prüfen ob in der eingegebenen Spalte noch platz ist ->
+        //Eingegebene Spalte wird an NewMove übergeben, Gesamtanzahl der Zeilen im Spielfled, alle Spielstein Koordinaten und der aktive spieler werden an NewMove übergeben
+        //NewMove gibt ein Koordinaten Array zurück, das alle bisherigen und den neu gesetzten Spielstein enthält
+        // Die neuen Koordinaten werden in das Board objekt geschrieben.
+        Board.setCoordinates(newMove(Console.askColumn(Board.getCoordinates()),Board.getRows(),Board.getCoordinates(),getActivePlayer()));
+    }
+
+    private void toggleActivePlayer(){
+
+        if (getActivePlayer().getPlayerID() == player1.getPlayerID()){
+            getActivePlayer().setPlayerID(player2.getPlayerID());
+            getActivePlayer().setPlayerSymbol(player2.getPlayerSymbol());
         }else{
-            player1.active = true;
-            player2.active = false;
+            getActivePlayer().setPlayerID(player1.getPlayerID());
+            getActivePlayer().setPlayerSymbol(player1.getPlayerSymbol());
         }
     }
 
-    private int checkWinner(board MyBoard,player player){  //Methode zur Prüfung ob es einen Gewinner gibt
-        int Points = 0;
+    private player getActivePlayer(){
+        return activePlayer;
+    }
 
+    private boolean checkField(int row, int col, int[][]coordinates) {
+        if (coordinates[row][col] == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public int[][] newMove(int col, int rows,int[][] coordinates, player player){
+        for(int row = rows; row > 0; row--){   //Schleife zählt von max.höhe des Spielfelds runter bis auf 1. Falls schon ein Spielstein in der Spalte ist, wird der nächste darüber platziert
+            if(checkField(row,col,coordinates)){                //Ist der Eintrag im Koordianten Array leer
+                coordinates[row][col] = player.getPlayerID();     //Wird das Zeichen des Spieler eingetragen
+                break;                             //Schleife unterbrechen
+            }
+        }
+        return coordinates;
+    }
+
+
+    private void checkWinner(int rows, int cols, int[][] coordinates,player player){  //Methode zur Prüfung ob es einen Gewinner gibt
+        int Points = 0;
+        String WinCondition;
         //waagerecht
-        for(int y = MyBoard.rows; y > 0; y--){             //Läuft von der untersten bis zur obersten Reihe (6-1)
-            for(int x = 1; x <= MyBoard.cols; x++){       //für jedes Feld in der Reihe
-                if(MyBoard.coordinates[y][x] == player.ID){    //Prüfung ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+        for(int y = rows; y > 0; y--){             //Läuft von der untersten bis zur obersten Reihe (6-1)
+            for(int x = 1; x <= cols; x++){       //für jedes Feld in der Reihe
+                if(coordinates[y][x] == player.getPlayerID()){    //Prüfung ob sich darin das Zeichen des Spielers befindet der gerade dran ist
                     Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
                 }
-                if(MyBoard.coordinates[y][x] != player.ID){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                if(coordinates[y][x] != player.getPlayerID()){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
                     Points = 0;                     // Punktezähler wieder auf 0 srtzen
                 }
                 if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
-                    System.out.println("Vier Waagerechte in einer Reihe");
-                    System.out.println("Spieler " + player.symbol + " hat Gewonnen!");
-                    return player.ID;                  // Gibt die Schleife den Gewinner zurück
+                    WinCondition = "Vier Waagerechte in einer Reihe";
+                    setWinner(player,WinCondition);                  // Gibt die Schleife den Gewinner zurück
                 }
             }
             Points = 0;
         }
+
         //Senkrecht
         Points = 0;
-        for(int x = MyBoard.cols; x > 0; x--){             //Läuft von Spalte ganz rechts bis zum anfang
-            for(int y = 1; y <= MyBoard.rows; y++){       //Prüft jedes Feld in der Spalte
-                if(MyBoard.coordinates[y][x] == player.ID){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+        for(int x = cols; x > 0; x--){             //Läuft von Spalte ganz rechts bis zum anfang
+            for(int y = 1; y <= rows; y++){       //Prüft jedes Feld in der Spalte
+                if(coordinates[y][x] == player.getPlayerID()){    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
                     Points++;                       //Für jedes aufeinenderfolgende gleiche Zeiche gibt es einen Punkt
                 }
-                if(MyBoard.coordinates[y][x] != player.ID){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
+                if(coordinates[y][x] != player.getPlayerID()){    //Findet die Schleife ein anderes Zeichen als das des Spielers der and er Reihe sit
                     Points = 0;                     // Punktezähler wieder auf 0 srtzen
                 }
                 //System.out.print(Points);
                 if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
-                    System.out.println("Vier senkrechte in einer Reihe");
-                    System.out.println("Spieler " + player.symbol + " hat Gewonnen!");
-                    return player.ID;                  // Gibt die Schleife den Gewinner zurück
+                    WinCondition = "Vier senkrechte in einer Reihe";
+                    setWinner(player,WinCondition);                   // Gibt die Schleife den Gewinner zurück
                 }
             }
             Points = 0;                           //Nach jeder Spalte wird der Punktezähler zurückgesetzt
@@ -82,19 +178,18 @@ class FourWins{
         Points = 0;
         //int x = 1;
         for(int x = 1; x  <= 4; x++ ){              //Von Spalte eins bis 4 durchlaufen
-            for(int y = MyBoard.rows; y >= 3; y--){             //In jeder Spalte Von der untersten Reihe bis zur 4. von unten durchlaufen
-                if(MyBoard.coordinates[y][x] == player.ID){    //Prüfen ob im feld das zeichen des Spielers ist
+            for(int y = rows; y >= 3; y--){             //In jeder Spalte Von der untersten Reihe bis zur 4. von unten durchlaufen
+                if(coordinates[y][x] == player.getPlayerID()){    //Prüfen ob im feld das zeichen des Spielers ist
                     Points++;                       //Einen punkt für das erste zeichen gutschreiben
                     int row = y;                            //aktuelle Reihennummer in row speichern
                     for (int col = x+1; col <= x+3; col++) { //aktuelle spaltennummer in x speichern und per for immer um eins erhöhen
                         row--;                              //reihennummer mit jedem durchlauf um eins verringern
-                        if (MyBoard.coordinates[row][col] == player.ID) {    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                        if (coordinates[row][col] == player.getPlayerID()) {    //ob sich darin das Zeichen des Spielers befindet der gerade dran ist
                             Points++;
                         }else Points = 0;
                         if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
-                            System.out.println("4diagonal links unten ->rechts oben");
-                            System.out.println("Spieler " + player.symbol + " hat Gewonnen!");
-                            return player.ID;                  // Gibt die Schleife den Gewinner zurück
+                            WinCondition = "4diagonal links unten ->rechts oben";
+                            setWinner(player,WinCondition);                   // Gibt die Schleife den Gewinner zurück
                         }
                     }
                 }
@@ -107,67 +202,138 @@ class FourWins{
         //int x = 1;
         for(int x = 1; x  <= 4; x++ ){              //Von Spalte eins bis 4 durchlaufen
             for(int y = 1; y <= 3; y++){             //In jeder Spalte Von der untersten Reihe bis zur 4. von unten durchlaufen
-                if(MyBoard.coordinates[y][x] == player.ID){    //Prüfen ob im feld das zeichen des Spielers ist
+                if(coordinates[y][x] == player.getPlayerID()){    //Prüfen ob im feld das zeichen des Spielers ist
                     Points++;                       //Einen punkt für das erste zeichen gutschreiben
                     int row = y;                            //aktuelle Reihennummer in row speichern
                     for (int col = x+1; col <= x+3; col++) { //aktuelle spaltennummer in x speichern und per for immer um eins erhöhen
                         row++;                              //reihennummer mit jedem durchlauf um eins verringern
-                        if (MyBoard.coordinates[row][col] == player.ID) {    //Prüfen ob sich darin das Zeichen des Spielers befindet der gerade dran ist
+                        if (coordinates[row][col] == player.getPlayerID()) {    //Prüfen ob sich darin das Zeichen des Spielers befindet der gerade dran ist
                             Points++;                             //Einen punkt für das zeichen gutschreiben
                         }else Points = 0;
                         if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
-                            System.out.println("4 Diagonal links oben ->rechts unten");
-                            System.out.println("Spieler " + player.symbol + " hat Gewonnen!");
-                            return player.ID;                  // Gibt die Schleife den Gewinner zurück
+                            WinCondition = "4 Diagonal links oben ->rechts unten";
+                            setWinner(player,WinCondition);                   // Gibt die Schleife den Gewinner zurück
                         }
                     }
                 }
             }
             Points = 0; //Nach jeder Spalte wird der Punktezähler zurückgesetzt
         }
-        return 0;
     }
 
-    private boolean checkDraw(board MyBoard){            //Methode zur Prüfung bo es noch freie felder auf dem spielfeld gibt -> True bei unentschieden
-        for(int y = 1; y <= MyBoard.rows; y++){    //Alle Zeilen
-            for(int x = 1; x <= MyBoard.cols; x++){    // Und alle Felder in der Reihe abarbeiten
-                if (MyBoard.coordinates[y][x] == 0){ //Prüfen ob leer
-                    return false;                   //Wenn leer, kein unentschieden
+    public void setWinner(player winner, String WindCondition) {
+        this.winner = winner;
+        this.WinCondition = WindCondition;
+        GameStateHandler(3);
+    }
+
+    public void showWinner(){
+        Console.printWinner(getWinner(),getWinCondition());
+    }
+
+    public player getWinner(){
+        return this.winner;
+    }
+
+    public String getWinCondition(){
+        return this.WinCondition;
+    }
+
+
+    private void checkDraw(int rows, int cols, int[][] coordinates){            //Methode zur Prüfung bo es noch freie felder auf dem spielfeld gibt -> True bei unentschieden
+        for(int y = 1; y <= rows; y++){    //Alle Zeilen
+            for(int x = 1; x <= cols; x++){    // Und alle Felder in der Reihe abarbeiten
+                if (coordinates[y][x] == 0){ //Prüfen ob leer
+                                       //Wenn leer, kein unentschieden
                 }
             }
         }
-        System.out.println("Draw!");    //Wenn kein leeres feld gefunden, unentschieden
-        System.out.println("Game OVER!");
-        return true;
+       // System.out.println("Draw!");    //Wenn kein leeres feld gefunden, unentschieden
+       // System.out.println("Game OVER!");
+        GameStateHandler(4); //
+    }
+
+    private void playAgain(){
+        //TODO Console muss fragen ob erneut gespielt werden soll
     }
 
 }
 
 class board {
-    int rows = 6;
-    int cols = 7;
-    int[][] coordinates = new int[this.rows+1][this.cols+1]; //+1 damit wir bei 1 und nicht bei null starten können
+    private int rows;
+    private int cols ;
+   // private int[][] coordinates = new int[this.rows+1][this.cols+1]; //+1 damit wir bei 1 und nicht bei null starten können
+   private int[][] coordinates;
 
-    public int[][] initialize(){
+    public void setSize(int cols, int rows){
+        this.rows = rows;
+        this.cols = cols;
+        this.coordinates = new int[this.rows+1][this.cols+1];
+    }
+    
+    public void initialize(int FillWithValue){
 
         for(int y  = 1; y < this.rows+1; y++ ){
             for(int x  = 1; x < this.cols+1; x++ ){
-                coordinates[y][x] = 0;
+                this.coordinates[y][x] = FillWithValue;
             }
         }
-        return coordinates;
     }
 
-    public void print(player player1, player player2){                  //Spielfled ausgeben -> Player objekte müssen übergeben werden, damit die ID und das Symbol des Spielers bekannt sind
-        //System.out.println("  1    2    3    4    5    6    7  ");
-        System.out.println(printHeader());
-        for(int y  = 1; y < this.rows+1; y++ ){
-            for(int x  = 1; x < this.cols+1; x++ ){
+    public int[][] getCoordinates(){
+        return this.coordinates;
+    }
+
+    public void setCoordinates(int[][] coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public int getCols(){
+        return this.cols;
+    }
+    public int getRows(){
+        return this.rows;
+    }
+
+    public String getHeader(){
+        String header = "";
+        for(int i = 1; i<=getCols();i++ ){
+            header = header + "  " + i + "  ";
+        }
+        return header;
+    }
+}
+
+class player {
+    private int ID;
+    private char symbol;
+    
+    public void setPlayerID(int playerID){
+        this.ID =  playerID;                
+    }
+    public void setPlayerSymbol( char playerSymbol){
+        this.symbol = playerSymbol;
+    }
+    public int getPlayerID(){
+        return this.ID;
+    }
+    public char getPlayerSymbol(){
+        return this.symbol;
+    }
+
+}
+
+class UserInterface {
+
+    public void printBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2){
+        System.out.println(Header);
+        for(int y  = 1; y < rows+1; y++ ){
+            for(int x  = 1; x < cols+1; x++ ){
                 System.out.print("[ ");
-                if(coordinates[y][x] == player1.ID ){
-                    System.out.print(player1.symbol);
-                }else if(coordinates[y][x] == player2.ID) {
-                    System.out.print(player2.symbol);
+                if(coordinates[y][x] == player1.getPlayerID() ){
+                    System.out.print(player1.getPlayerSymbol());
+                }else if(coordinates[y][x] == player2.getPlayerID()) {
+                    System.out.print(player2.getPlayerSymbol());
                 }else{
                     System.out.print(" ");
                 }
@@ -177,29 +343,27 @@ class board {
         }
     }
 
-    public String printHeader(){
-        String header = "";
-        for(int i = 1; i<=cols;i++ ){
-            header = header + "  " + i + "  ";
-        }
-        return header;
+    public void printWinner(player winner, String WinCondition){
+        System.out.println("Congrats, Player "+ winner.getPlayerID() +" has won the game");
+        System.out.println(WinCondition);
     }
 
-    public int askColumn(){
-        userInput myInput = new userInput();
+    public int askColumn(int[][]coordinates){
+        //userInput myInput = new userInput();
         int answer;
+        int[] validAnswers = new int[]{1,2,3,4,5,6,7};
 
         while(true) {
-            answer = myInput.ask("Column: ");
-            if (checkColumn(answer)) {
-               break;
+            answer = ask("Column: ",validAnswers);
+            if (checkColumn(answer,coordinates)) {
+                break;
             }
         }
-        System.out.println(answer);
+        //System.out.println(answer);
         return answer;
     }
-    //Prüfung ob noch Platz in der Spalte ist
-    private boolean checkColumn(int col){
+
+    private boolean checkColumn(int col, int[][]coordinates){
         if(coordinates[1][col] == 0){
             return true;
         }else {
@@ -209,40 +373,7 @@ class board {
         return false;
     }
 
-    private boolean checkField(int row, int col) {
-        if (coordinates[row][col] == 0) {
-            return true;
-        }
-        return false;
-    }
-
-    public void newMove(int col, player player){
-        for(int row = this.rows; row > 0; row--){   //Schleife zählt von max.höhe des Spielfelds runter bis auf 1. Falls schon ein Spielstein in der Spalte ist, wird der nächste darüber platziert
-            if(checkField(row,col)){                //Ist der Eintrag im Koordianten Array leer
-                coordinates[row][col] = player.ID;     //Wird das Zeichen des Spieler eingetragen
-                break;                              //Schleife unterbrechen
-            }
-        }
-    }
-
-}
-
-class player {
-    int ID;
-    char symbol;
-    boolean active;
-    public player(int playerID, char playerSymbol, boolean isActivePlayer){
-        this.ID =  playerID;
-        this.symbol = playerSymbol;
-        this.active = isActivePlayer;
-    }
-
-}
-
-class userInput {
-    int[] validAnswers = new int[]{1,2,3,4,5,6,7};
-
-    public int ask(String question ){
+    private int ask(String question, int[] validAnswers ){
         Scanner Input = new Scanner(System.in);
         System.out.print(question);
         while(!Input.hasNextInt()){                               //Falls kein Int eingegeben wird
@@ -250,7 +381,8 @@ class userInput {
             Input.next();
         }
         int answer = Input.nextInt();
-        while(!validate(answer)){
+
+        while(!validate(answer,validAnswers)){
             System.out.println("Invalid Input!");
             System.out.println(question);
             answer = Input.nextInt();
@@ -258,7 +390,7 @@ class userInput {
         return answer;
     }
 
-    public boolean validate(int answer){
+    private boolean validate(int answer, int[] validAnswers){
         for(int valid: validAnswers)                                //Prüfen ob es sich um eine gültige Antwort handelt
         {
             if(answer == valid) {
@@ -268,4 +400,3 @@ class userInput {
         return false;
     }
 }
-
