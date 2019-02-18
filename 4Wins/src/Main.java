@@ -11,6 +11,7 @@ public class Main {
 class FourWins{
     //Attribute der Klasse FourWins
     //innerhalb der Klasse nutzbar
+    //aber nur über setter und getter methoden
     private player player1 = new player();
     private player player2 = new player();
     private player activePlayer = new player();
@@ -19,41 +20,42 @@ class FourWins{
     private player winner;
     private String WinCondition;
     private int[][] WinCoordinates;
+    private int GameStatus = 0;
 
     public void start(){
-        GameStateHandler(0);
+        this.GameStateHandler();    //Ruft den Zustandsautomaten auf
     }
 
-    //Constructor Methode beinhaltet den gesamten SPielablauf
-    public void GameStateHandler(int GameStatus){
+      private void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten
 
-        while(GameStatus <=5){
+        while(GameStatus <=6){
             switch(GameStatus){
                 case 0: // Vor dem Spiel die Regeln und bedienung erklären
                         this.Console.printWelcome();
                         this.Console.printHelp();
-                        GameStatus = 1;
+                        this.changeGameState(1); //spiel initialisieren
                     break;
                 case 1: //Spiel wird gestartet
                         this.initGame();
+                        this.changeGameState(2);
                     break;
                 case 2: //Spiel ist im Gange
                         this.playGame();
                     break;
                 case 3: //Ein Spieler hat gewonnen
-                        this.showWinner();
-                        //this.showBoard();
-                        GameStatus = 5;
+                        this.showWinner(); //zeige den Gewinner an und hebe die spielsteine hervor die zum sieg geführt haben
+                        this.changeGameState(5); //nochmal spielen?
                     break;
                 case 4: // Unentschieden
                         this.showDraw();
-                        GameStatus = 5;
+                        this.changeGameState(5);
                     break;
                 case 5: //Nochmal spielen
                        Playagain();
                     break;
                 default: //Beenden
-                    System.out.println("Bye");
+                    //System.out.println("Bye");
+                    changeGameState(7);
                     break;
             }
         }
@@ -69,26 +71,27 @@ class FourWins{
 
         this.Board.setSize(7,6);
         this.Board.initialize(0);
+    }
 
-        GameStateHandler(2);
+    private void changeGameState(int newGameState){
+        this.GameStatus = newGameState;
     }
 
     private void playGame(){
-        //Aktiven Spieler wechseln (sorgt bei erneutem spielen dafür das der verlierer anfangen darf :))
-        toggleActivePlayer();
-        showBoard();
-        showActivePlayer();
-        makeAMove();
-        checkWinner(Board.getRows(), Board.getCols(), Board.getCoordinates(), getActivePlayer());
-        checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates());
+        this.toggleActivePlayer();//Aktiven Spieler wechseln (sorgt bei erneutem spielen dafür das der verlierer anfangen darf :))
+        this.showBoard();         //Spielfeld anzeigen
+        this.showActivePlayer();  //Meldung wer dran ist ausgeben
+        this.makeAMove();         //User nach neuem Spielzug fragen und diesen durchführen
+        this.checkWinner(Board.getRows(), Board.getCols(), Board.getCoordinates(), getActivePlayer()); //Prüfen ob jemand gewonnen hat
+        this.checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates());                      //Prüfen ob Unentschieden
     }
 
     private void showBoard(){ //Methode die die Methode zum anzeigen des Spielfelds auruft
-        Console.printBoard(Board.getCols(),Board.getRows(),Board.getHeader(),Board.getCoordinates(), player1, player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
+        this.Console.printBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
     }
 
     private void showActivePlayer(){
-        this.Console.printActivePlayer(getActivePlayer());
+        this.Console.printActivePlayer(this.getActivePlayer());
     }
 
     //Methode um neuen Spielstein aufs Feld zu setzen
@@ -245,7 +248,7 @@ class FourWins{
         this.winner = winner;
         this.WinCondition = WindCondition;
         this.setWinCoordinates(WinCoordinates);
-        GameStateHandler(3);
+        this.changeGameState(3);
     }
 
     public void setWinCoordinates(int[][] WinCoordinates){
@@ -265,15 +268,13 @@ class FourWins{
         return this.WinCondition;
     }
 
-    public void showDraw(){
-        Console.printDraw();
-    }
+
 
     public void Playagain(){
         if ( Console.askPlayAgain() == 1){
-            GameStateHandler(1);
+            this.changeGameState(1);//GameStateHandler(1);
         }else{
-            GameStateHandler(6); //TODO anderen weg finden das programm zu beenden, auf die akuelle art endet es nicht
+            this.changeGameState(6);//GameStateHandler(6); //TODO anderen weg finden das programm zu beenden, auf die akuelle art endet es nicht
         }
     }
 
@@ -285,10 +286,12 @@ class FourWins{
                 }
             }
         }
-       // System.out.println("Draw!");    //Wenn kein leeres feld gefunden, unentschieden
-       // System.out.println("Game OVER!");
-        GameStateHandler(4);
+        this.changeGameState(4); //Wird kein freies feld gefunden endet das Spiel mit unentschieden
     }
+
+    public void showDraw(){
+        Console.printDraw();
+    } //Anzeige der Meldung das es Unentschieden ist
 }
 
 class board {
@@ -367,6 +370,7 @@ class UserInterface {
         System.out.println("When its your turn, you are able to place your mark by typing in the number of the column where you want to place it");
     }
 
+    //Ausgabe des Spielfelds TODO ggf. in FourWins ein String array mit erforderlichen Inhalten erstellen und hier nurnoch ausgeben
     public void printBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2){
         System.out.println();
         System.out.println(Header);
@@ -456,7 +460,7 @@ class UserInterface {
 
         while(true) {
             answer = ask("Column: ",validAnswers);
-            //TODO: Prüfung ob die Spalte noch frei sit in der FourWins klasse vornehmen! KEINE LOGIK IM USER Interface
+            //TODO: Prüfung ob die Spalte noch frei ist in der FourWins klasse vornehmen! KEINE LOGIK IM USER Interface
             if (checkColumn(answer,coordinates)) {
                 break;
             }
