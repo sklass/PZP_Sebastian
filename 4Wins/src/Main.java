@@ -109,16 +109,66 @@ class FourWins{
     }
 
     private void showBoard(){ //Methode die die Methode zum anzeigen des Spielfelds auruft
-        int cols = this.getColCount();
+        int cols = this.getColCount();      //Board größe, koordinaten der vorhandenen Spielsteine und header ermitteln
         int rows = this.getRowCount();
         String header = this.Board.getHeader();
         int[][] coordinates = this.getCoordinates();
-        this.Console.printBoard(cols,rows,header,coordinates, this.player1, this.player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
+        //das Koordinaten array wird in ein String-Array umgewandelt und ausgegeben
+        this.Console.PrintBoard(cols,rows,header,interpretCoordinates(coordinates));
+    }
+
+    // Im Koordinaten array ist die ID des Spielers eingetragen, bei der Ausgabe soll aber das Symbol des Spielers angezeigt werden
+    //interpretCoordinates erzeugt aus dem IntegerArray mit den IDs ein String Array mit den fertig generierten Feldern die das Symbol der Spieler beinhalten
+    private String[][] interpretCoordinates(int[][]coordinates){
+        int rows = this.getRowCount();
+        int cols = this.getColCount();
+        String[][] BoardContent = new String[rows+1][cols+1];
+        int[][] WinCoordinates = this.WinCoordinates;
+        int i =0;
+        String ANSI_RED = "\u001B[31m";
+        String ANSI_WHITE = "\033[0m";
+
+        for(int y  = 1; y < rows+1; y++ ) {
+            for (int x = 1; x < cols + 1; x++) {
+
+                if (WinCoordinates != null) {                   //es gibt einen gewinner
+                    if (i > 3) i = 0;
+                    if (y == WinCoordinates[0][i] && x == WinCoordinates[1][i]) {   //prüfe ob aktuelle Kkoordinate eine gewinner koordinate ist
+                        i++;                                                        //Ist es eine koordinate die zum sieg geführt hat, gib sie rot aus
+                        if (coordinates[y][x] == player1.getPlayerID()) {
+                            BoardContent[y][x] = ANSI_RED + "[ " + player1.getPlayerSymbol() + " ]" + ANSI_WHITE;
+                        } else if (coordinates[y][x] == player2.getPlayerID()) {
+                            BoardContent[y][x] = ANSI_RED + "[ " + player2.getPlayerSymbol() + " ]" + ANSI_WHITE;
+                        } else {
+                            BoardContent[y][x] = "[ " + " " + " ]";
+                        }
+                    }
+                    else {                                                          //es gibt einen sieger aber die aktuelle koordinate gehört nicht zur sieger koordinate -> weisse ausgabe
+                        if (coordinates[y][x] == player1.getPlayerID()) { //Symbol gehört Player1
+                            BoardContent[y][x] = "[ " + player1.getPlayerSymbol() + " ]";
+                        } else if (coordinates[y][x] == player2.getPlayerID()) {
+                            BoardContent[y][x] = "[ " + player2.getPlayerSymbol() + " ]";
+                        } else {
+                            BoardContent[y][x] = "[ " + " " + " ]";
+                        }
+                    }
+                } else {                                                            //es gibt keinen sieger, alles normal ausgeben
+                    if (coordinates[y][x] == player1.getPlayerID()) {
+                        BoardContent[y][x] = "[ " + player1.getPlayerSymbol() + " ]";
+                    } else if (coordinates[y][x] == player2.getPlayerID()) {
+                        BoardContent[y][x] = "[ " + player2.getPlayerSymbol() + " ]";
+                    } else {
+                        BoardContent[y][x] = "[ " + " " + " ]";
+                    }
+                }
+                //BoardContent[y][x] = BoardContent[y][x] + " ]";
+            }
+        }
+        return BoardContent;
     }
 
     //Methode um neuen Spielstein aufs Feld zu setzen
     private void makeAMove(){
-
         int col = this.askColumn();                                     //Der User wird nach einer Spalte gefragt
         this.Board.setCoordinates(newMove(col,this.getActivePlayer())); //Eingegebene Spalte und aktiver Spieler werden an newMove übergeben
                                                                         //NewMove prüft die spalte ob platz ist, und trägt das Spielersymbol ein
@@ -305,7 +355,8 @@ class FourWins{
 
     private void showWinner(){
         Console.printWinner(getWinner(),getWinCondition());
-        Console.printWinnerBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2,this.WinCoordinates);
+        this.showBoard();
+        //Console.printWinnerBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2,this.WinCoordinates);
     }
 
     private player getWinner(){
@@ -416,61 +467,16 @@ class UserInterface {   //Alle Aus- und Eingaben innerhalb der Klasse UserInterf
         System.out.println("When its your turn, you are able to place your mark by typing in the number of the column where you want to place it");
     }
 
-    //Ausgabe des Spielfelds TODO ggf. in FourWins ein String array mit erforderlichen Inhalten erstellen und hier nurnoch ausgeben
-    void printBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2){
+    void PrintBoard(int cols, int rows, String Header, String[][] BoardContent){
         System.out.println();
         System.out.println(Header);
-        for(int y  = 1; y < rows+1; y++ ){
-            for(int x  = 1; x < cols+1; x++ ){
-                System.out.print("[ ");
-                if(coordinates[y][x] == player1.getPlayerID() ){
-                    System.out.print(player1.getPlayerSymbol());
-                }else if(coordinates[y][x] == player2.getPlayerID()) {
-                    System.out.print(player2.getPlayerSymbol());
-                }else{
-                    System.out.print(" ");
-                }
-                System.out.print(" ]");
+        for(int y  = 1; y < rows+1; y++ ) {
+            for (int x = 1; x < cols + 1; x++) {
+                System.out.print(BoardContent[y][x]);
             }
             System.out.println();
         }
-    }
-    //Ausgabe des Spielfelds inkl. markierung der Spielsteine die zum Sieg geführt haben
-    void printWinnerBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2, int[][]WinCoordinates){
-        String ANSI_RED = "\u001B[31m";
-        String ANSI_WHITE = "\033[0m";
-        int i = 0;
-        System.out.println();
-        System.out.println(Header);
-        for(int y  = 1; y < rows+1; y++ ){
-            for(int x  = 1; x < cols+1; x++ ) {
-                System.out.print("[ ");
-                //for (int i = 0; i <= 3; i++) {
-                    if(i>3) i =0;
-                    if (y == WinCoordinates[0][i] && x == WinCoordinates[1][i]) {
-                        i++;
-                        if (coordinates[y][x] == player1.getPlayerID()) {
-                            printPlayerSymbol(player1.getPlayerSymbol(), ANSI_RED);
-                        } else if (coordinates[y][x] == player2.getPlayerID()) {
-                            printPlayerSymbol(player2.getPlayerSymbol(), ANSI_RED);
-                        } else {
-                            System.out.print(" ");
-                        }
 
-                    } else {
-                        if (coordinates[y][x] == player1.getPlayerID()) {
-                            printPlayerSymbol(player1.getPlayerSymbol(), ANSI_WHITE);
-                        } else if (coordinates[y][x] == player2.getPlayerID()) {
-                            printPlayerSymbol(player2.getPlayerSymbol(), ANSI_WHITE);
-                        } else {
-                            System.out.print(" ");
-                        }
-                    }
-               // }
-                System.out.print(" ]");
-            }
-            System.out.println();
-        }
     }
 
     private void printPlayerSymbol(char PlayerSymbol, String ANSIColor){
@@ -511,6 +517,10 @@ class UserInterface {   //Alle Aus- und Eingaben innerhalb der Klasse UserInterf
         while(!validate(answer,validAnswers)){
             System.out.println("Invalid Input!");
             System.out.println(question);
+            while(!Input.hasNextInt()){                               //Falls kein Int eingegeben wird
+                System.out.println("Invalid Input! Numbers only!");
+                Input.next();
+            }
             answer = Input.nextInt();
         }
         return answer;
