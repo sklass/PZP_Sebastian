@@ -10,8 +10,6 @@ public class Main {
 }
 class FourWins{
     //Attribute der Klasse FourWins
-    //innerhalb der Klasse nutzbar
-    //aber nur über setter und getter methoden
     private player player1 = new player();
     private player player2 = new player();
     private player activePlayer = new player();
@@ -175,11 +173,12 @@ class FourWins{
                                                                         //SetCoordinates speichert die neuen Daten im Board objekt
     }
 
+    //Abfrage einer Spalte mithilfe des UserInterface
     private int askColumn(){
         int answer;
         int[] validAnswers = new int[]{1,2,3,4,5,6,7};
 
-        while(true) {
+        while(true) {                                                   //Abfrage wird solange wiederholt bis eine gültige Spalte eingegeben wird
             answer = this.Console.ask("Column: ",validAnswers);
             if (this.checkColumn(answer)) {
                 break;
@@ -193,8 +192,7 @@ class FourWins{
         if(coordinates[1][col] == 0){
             return true;
         }else {
-            System.out.println("Column " + col + " is full");
-            System.out.println("Please choose another one");
+            this.Console.printColumnFull(col);
         }
         return false;
     }
@@ -479,11 +477,6 @@ class UserInterface {   //Alle Aus- und Eingaben innerhalb der Klasse UserInterf
 
     }
 
-    private void printPlayerSymbol(char PlayerSymbol, String ANSIColor){
-        String ANSI_WHITE = "\033[0m";
-        System.out.print(ANSIColor + PlayerSymbol + ANSI_WHITE);
-    }
-
     void printWinner(player winner, String WinCondition){
         System.out.println("Congrats, Player "+ winner.getPlayerSymbol() +" has won the game");
         System.out.println(WinCondition);
@@ -503,6 +496,11 @@ class UserInterface {   //Alle Aus- und Eingaben innerhalb der Klasse UserInterf
 
     void printActivePlayer(player activePlayer){
         System.out.println("Its your turn Player " + activePlayer.getPlayerSymbol());
+    }
+
+    void printColumnFull(int col){
+        System.out.println("Column " + col + " is full");
+        System.out.println("Please choose another one");
     }
 
     int ask(String question, int[] validAnswers ){
