@@ -46,7 +46,6 @@ class FourWins{
                     break;
                 case 4: // Unentschieden
                         this.showDraw();
-                        this.showBoard();
                         this.changeGameState(5);
                     break;
                 case 5: //Nochmal spielen
@@ -117,6 +116,7 @@ class FourWins{
 
     // Im Koordinaten array ist die ID des Spielers eingetragen, bei der Ausgabe soll aber das Symbol des Spielers angezeigt werden
     //interpretCoordinates erzeugt aus dem IntegerArray mit den IDs ein String Array mit den fertig generierten Feldern die das Symbol der Spieler beinhalten
+    //So kann ohn jegliche logik im userinterface die ausgabe auf der console erfolgen
     private String[][] interpretCoordinates(int[][]coordinates){
         int rows = this.getRowCount();
         int cols = this.getColCount();
@@ -352,8 +352,8 @@ class FourWins{
     }
 
     private void showWinner(){
-        Console.printWinner(getWinner(),getWinCondition());
         this.showBoard();
+        Console.printWinner(getWinner(),getWinCondition());
         //Console.printWinnerBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2,this.WinCoordinates);
     }
 
@@ -377,6 +377,7 @@ class FourWins{
     }
 
     private void showDraw(){
+        this.showBoard();
         Console.printDraw();
     } //Anzeige der Meldung das es Unentschieden ist
 
