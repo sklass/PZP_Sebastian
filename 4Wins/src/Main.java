@@ -22,7 +22,7 @@ class FourWins{
     private int[][] WinCoordinates;
     private int GameStatus = 0;
 
-    public void start(){
+    void start(){
         this.GameStateHandler();    //Ruft den Zustandsautomaten auf
     }
 
@@ -48,6 +48,7 @@ class FourWins{
                     break;
                 case 4: // Unentschieden
                         this.showDraw();
+                        this.showBoard();
                         this.changeGameState(5);
                     break;
                 case 5: //Nochmal spielen
@@ -59,6 +60,10 @@ class FourWins{
                     break;
             }
         }
+    }
+
+    private void changeGameState(int newGameState){
+        this.GameStatus = newGameState;
     }
 
     private void initGame(){
@@ -73,10 +78,6 @@ class FourWins{
         this.Board.initialize(0);
     }
 
-    private void changeGameState(int newGameState){
-        this.GameStatus = newGameState;
-    }
-
     private void playGame(){
         this.toggleActivePlayer();//Aktiven Spieler wechseln (sorgt bei erneutem spielen dafür das der verlierer anfangen darf :))
         this.showBoard();         //Spielfeld anzeigen
@@ -86,12 +87,28 @@ class FourWins{
         this.checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates());                      //Prüfen ob Unentschieden
     }
 
-    private void showBoard(){ //Methode die die Methode zum anzeigen des Spielfelds auruft
-        this.Console.printBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
+    //Methode zum wechseln des aktiven Spielers
+    private void toggleActivePlayer(){
+
+        if (this.getActivePlayer().getPlayerID() == this.player1.getPlayerID()){      //Wenn der aktive Spieler derzeit Spieler1 ist, setze Spieler2 als aktiven Spieler
+            this.getActivePlayer().setPlayerID(this.player2.getPlayerID());
+            this.getActivePlayer().setPlayerSymbol(this.player2.getPlayerSymbol());
+        }else{                                                               //Wenn der aktive Spieler derzeit nicht Spieler1 ist, setze Spieler1 als aktiven Spieler
+            this.getActivePlayer().setPlayerID(this.player1.getPlayerID());
+            this.getActivePlayer().setPlayerSymbol(this.player1.getPlayerSymbol());
+        }
     }
 
     private void showActivePlayer(){
         this.Console.printActivePlayer(this.getActivePlayer());
+    }
+
+    private player getActivePlayer(){   //Methode gibt den aktuell aktiven Spieler zurück
+        return this.activePlayer;
+    }
+
+    private void showBoard(){ //Methode die die Methode zum anzeigen des Spielfelds auruft
+        this.Console.printBoard(this.Board.getCols(),this.Board.getRows(),this.Board.getHeader(),this.Board.getCoordinates(), this.player1, this.player2); //Hole anzahl spalten, anzahl Reihen sowie Überschrift und FeldEinträge und gib diese aus
     }
 
     //Methode um neuen Spielstein aufs Feld zu setzen
@@ -101,34 +118,10 @@ class FourWins{
         //Eingegebene Spalte wird an NewMove übergeben, Gesamtanzahl der Zeilen im Spielfled, alle Spielstein Koordinaten und der aktive spieler werden an NewMove übergeben
         //NewMove gibt ein Koordinaten Array zurück, das alle bisherigen und den neu gesetzten Spielstein enthält
         // Die neuen Koordinaten werden in das Board objekt geschrieben.
-        Board.setCoordinates(newMove(Console.askColumn(Board.getCoordinates()),Board.getRows(),Board.getCoordinates(),getActivePlayer()));
+        this.Board.setCoordinates(newMove(this.Console.askColumn(this.Board.getCoordinates()),this.Board.getRows(),this.Board.getCoordinates(),this.getActivePlayer()));
     }
 
-    //Methode zum wechseln des aktiven Spielers
-    private void toggleActivePlayer(){
-
-        if (getActivePlayer().getPlayerID() == player1.getPlayerID()){      //Wenn der aktive Spieler derzeit Spieler1 ist, setze Spieler2 als aktiven Spieler
-            getActivePlayer().setPlayerID(player2.getPlayerID());
-            getActivePlayer().setPlayerSymbol(player2.getPlayerSymbol());
-        }else{                                                               //Wenn der aktive Spieler derzeit nicht Spieler1 ist, setze Spieler1 als aktiven Spieler
-            getActivePlayer().setPlayerID(player1.getPlayerID());
-            getActivePlayer().setPlayerSymbol(player1.getPlayerSymbol());
-        }
-    }
-
-    private player getActivePlayer(){   //Methode gibt den aktuell aktiven Spieler zurück
-        return activePlayer;
-    }
-
-    private boolean checkField(int row, int col, int[][]coordinates) {  //Methode um zu prüfen ob ein Spielfeld noch frei ist. Die Größe des Spielfelds sowie die bisher gesetzen Spielsteine werden übergeben
-        //TODO : Größe des Spielfeld anhand der Array größe ermitteln -> weniger parameter erforderlich
-        if (coordinates[row][col] == 0) {                               //Befindet sich im angegebenen Feld eine 0 ist das Feld leer
-            return true;
-        }
-        return false;
-    }
-
-    public int[][] newMove(int col, int rows,int[][] coordinates, player player){   //Methode um einen Spielstein auf das Spielfeld zu setzen. Die größe des Spielfelds, sowie die aktuell gesetzten Steine und der Spieler der den Spielzug durchführt werden übergeben
+    private int[][] newMove(int col, int rows,int[][] coordinates, player player){   //Methode um einen Spielstein auf das Spielfeld zu setzen. Die größe des Spielfelds, sowie die aktuell gesetzten Steine und der Spieler der den Spielzug durchführt werden übergeben
         //TODO : Größe des Spielfeld anhand der Array größe ermitteln -> weniger parameter erforderlich
         for(int row = rows; row > 0; row--){   //Schleife zählt von max.höhe des Spielfelds runter bis auf 1. Falls schon ein Spielstein in der Spalte ist, wird der nächste darüber platziert
             if(checkField(row,col,coordinates)){                //Ist der Eintrag im Koordianten Array leer
@@ -139,6 +132,12 @@ class FourWins{
         return coordinates;
     }
 
+    private boolean checkField(int row, int col, int[][]coordinates) {  //Methode um zu prüfen ob ein einzelnes Spielfeld noch frei ist. Die position des zu setzenden Spielsteins sowie die bisher gesetzen Spielsteine werden übergeben
+        if (coordinates[row][col] == 0) {                               //Befindet sich im angegebenen Feld eine 0 ist das Feld leer
+            return true;
+        }
+        return false;
+    }
 
     private void checkWinner(int rows, int cols, int[][] coordinates,player player){  //Methode zur Prüfung ob es einen Gewinner gibt
         //TODO : Größe des Spielfeld anhand der Array größe ermitteln -> weniger parameter erforderlich (rows,cols fallen weg)
@@ -201,7 +200,9 @@ class FourWins{
                             Points++;
                             WinCoordinates[0][Points-1] = row;
                             WinCoordinates[1][Points-1] = col;
-                        }else{ Points = 0; break;}
+                        }else{ //Points = 0;
+                             break;
+                        }
                         if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
                             WinCondition = "Four diagonal -> lower left to upper right";
                             setWinner(player,WinCondition,WinCoordinates);                   // Gibt die Schleife den Gewinner zurück
@@ -231,7 +232,9 @@ class FourWins{
                             Points++;                             //Einen punkt für das zeichen gutschreiben
                             WinCoordinates[0][Points-1] = row;
                             WinCoordinates[1][Points-1] = col;
-                        }else {Points = 0; break;}
+                        }else {//Points = 0;
+                            break;
+                        }
                         if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
                             WinCondition = "4 diagonal -> from upper left to lower right";
                             setWinner(player,WinCondition,WinCoordinates);                   // Gibt die Schleife den Gewinner zurück
@@ -244,38 +247,30 @@ class FourWins{
         }
     }
 
-    public void setWinner(player winner, String WindCondition, int[][] WinCoordinates) {
+    //Wurde ein Gewinner ermittelt sorgt die methode für die Speicherung des Gewinners, der Siegbedingung
+    // und der Koordinaten der Spielsteine die zum Sieg geführt haben
+    private void setWinner(player winner, String WindCondition, int[][] WinCoordinates) {
         this.winner = winner;
         this.WinCondition = WindCondition;
         this.setWinCoordinates(WinCoordinates);
-        this.changeGameState(3);
+        this.changeGameState(3);    //Spielstatus 3 -> Gewinner anzeigen
     }
 
-    public void setWinCoordinates(int[][] WinCoordinates){
+    private void setWinCoordinates(int[][] WinCoordinates){
         this.WinCoordinates = WinCoordinates;
     }
 
-    public void showWinner(){
+    private void showWinner(){
         Console.printWinner(getWinner(),getWinCondition());
         Console.printWinnerBoard(Board.getCols(),Board.getRows(),Board.getHeader(),Board.getCoordinates(), player1, player2,WinCoordinates);
     }
 
-    public player getWinner(){
+    private player getWinner(){
         return this.winner;
     }
 
-    public String getWinCondition(){
+    private String getWinCondition(){
         return this.WinCondition;
-    }
-
-
-
-    public void Playagain(){
-        if ( Console.askPlayAgain() == 1){
-            this.changeGameState(1);//GameStateHandler(1);
-        }else{
-            this.changeGameState(6);//GameStateHandler(6); //TODO anderen weg finden das programm zu beenden, auf die akuelle art endet es nicht
-        }
     }
 
     private void checkDraw(int rows, int cols, int[][] coordinates){            //Methode zur Prüfung bo es noch freie felder auf dem spielfeld gibt -> True bei unentschieden
@@ -289,9 +284,17 @@ class FourWins{
         this.changeGameState(4); //Wird kein freies feld gefunden endet das Spiel mit unentschieden
     }
 
-    public void showDraw(){
+    private void showDraw(){
         Console.printDraw();
     } //Anzeige der Meldung das es Unentschieden ist
+
+    private void Playagain(){
+        if ( Console.askPlayAgain() == 1){
+            this.changeGameState(1); //Spiel neu initialisieren
+        }else{
+            this.changeGameState(6); //Spiel beenden
+        }
+    }
 }
 
 class board {
@@ -300,13 +303,13 @@ class board {
    // private int[][] coordinates = new int[this.rows+1][this.cols+1]; //+1 damit wir bei 1 und nicht bei null starten können
    private int[][] coordinates;
 
-    public void setSize(int cols, int rows){
+    void setSize(int cols, int rows){
         this.rows = rows;
         this.cols = cols;
         this.coordinates = new int[this.rows+1][this.cols+1];
     }
 
-    public void initialize(int FillWithValue){
+    void initialize(int FillWithValue){
 
         for(int y  = 1; y < this.rows+1; y++ ){
             for(int x  = 1; x < this.cols+1; x++ ){
@@ -315,22 +318,22 @@ class board {
         }
     }
 
-    public int[][] getCoordinates(){
+    int[][] getCoordinates(){
         return this.coordinates;
     }
 
-    public void setCoordinates(int[][] coordinates) {
+    void setCoordinates(int[][] coordinates) {
         this.coordinates = coordinates;
     }
 
-    public int getCols(){
+    int getCols(){
         return this.cols;
     }
-    public int getRows(){
+    int getRows(){
         return this.rows;
     }
 
-    public String getHeader(){
+    String getHeader(){
         String header = "";
         for(int i = 1; i<=getCols();i++ ){
             header = header + "  " + i + "  ";
@@ -343,16 +346,16 @@ class player {
     private int ID;
     private char symbol;
 
-    public void setPlayerID(int playerID){
+    void setPlayerID(int playerID){
         this.ID =  playerID;
     }
-    public void setPlayerSymbol( char playerSymbol){
+    void setPlayerSymbol( char playerSymbol){
         this.symbol = playerSymbol;
     }
-    public int getPlayerID(){
+    int getPlayerID(){
         return this.ID;
     }
-    public char getPlayerSymbol(){
+    char getPlayerSymbol(){
         return this.symbol;
     }
 
@@ -360,18 +363,18 @@ class player {
 
 class UserInterface {
 
-    public void printWelcome(){
+    void printWelcome(){
         System.out.println("Welcome to 4Wins v1.0");
     }
 
-    public void printHelp(){
+    void printHelp(){
         System.out.println();
         System.out.println("To win this game you need to get 4 of your marks in a row. The row can be vertical, horizontal or diagonal");
         System.out.println("When its your turn, you are able to place your mark by typing in the number of the column where you want to place it");
     }
 
     //Ausgabe des Spielfelds TODO ggf. in FourWins ein String array mit erforderlichen Inhalten erstellen und hier nurnoch ausgeben
-    public void printBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2){
+    void printBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2){
         System.out.println();
         System.out.println(Header);
         for(int y  = 1; y < rows+1; y++ ){
@@ -389,8 +392,8 @@ class UserInterface {
             System.out.println();
         }
     }
-
-    public void printWinnerBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2, int[][]WinCoordinates){
+    //Ausgabe des Spielfelds inkl. markierung der Spielsteine die zum Sieg geführt haben
+    void printWinnerBoard(int cols, int rows, String Header, int[][]coordinates, player player1, player player2, int[][]WinCoordinates){
         String ANSI_RED = "\u001B[31m";
         String ANSI_WHITE = "\033[0m";
         int i = 0;
@@ -432,16 +435,16 @@ class UserInterface {
         System.out.print(ANSIColor + PlayerSymbol + ANSI_WHITE);
     }
 
-    public void printWinner(player winner, String WinCondition){
+    void printWinner(player winner, String WinCondition){
         System.out.println("Congrats, Player "+ winner.getPlayerSymbol() +" has won the game");
         System.out.println(WinCondition);
     }
 
-    public void printDraw(){
+    void printDraw(){
         System.out.println("Draw! The Game is over because all fields on the board are full");
     }
 
-    public int askPlayAgain(){
+    int askPlayAgain(){
         int answer;
         int[] validAnswers = new int[]{0,1};
         answer = ask("Play again? 1 = Yes / 0 = No",validAnswers);
@@ -449,11 +452,11 @@ class UserInterface {
         return answer;
     }
 
-    public void printActivePlayer(player activePlayer){
+    void printActivePlayer(player activePlayer){
         System.out.println("Its your turn Player " + activePlayer.getPlayerSymbol());
     }
 
-    public int askColumn(int[][]coordinates){
+    int askColumn(int[][]coordinates){
         //userInput myInput = new userInput();
         int answer;
         int[] validAnswers = new int[]{1,2,3,4,5,6,7};
