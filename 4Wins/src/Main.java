@@ -159,7 +159,6 @@ class FourWins{
                         BoardContent[y][x] = "[ " + " " + " ]";
                     }
                 }
-                //BoardContent[y][x] = BoardContent[y][x] + " ]";
             }
         }
         return BoardContent;
