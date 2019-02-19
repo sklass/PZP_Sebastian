@@ -33,8 +33,8 @@ public class FourWins extends BoardGame{
                     this.changeGameState(6);
                     break;
                 case 6:     //Gewinner  prüfen
-                    this.checkRow(3); //Prüfen ob jemand 3 in einer Reihe hat
-                    this.checkCol(3); //Prüfen ob jemand 3 in einer Spalte hat
+                    this.checkRow(4); //Prüfen ob jemand 4 in einer Reihe hat
+                    this.checkCol(4); //Prüfen ob jemand 4 in einer Spalte hat
                     this.checkDiagonale();
                     break;
                 case 7:     //Unentschieden prüfen
@@ -106,7 +106,7 @@ public class FourWins extends BoardGame{
 
     private void checkDiagonale(){
         int rows = this.Board.getRows();
-        int cols = this.Board.getCols();
+        //int cols = this.Board.getCols();
         int[][] coordinates = this.Board.getCoordinates();
         int Points;
         //vier diagonale von links unten nach rechts oben
@@ -130,7 +130,8 @@ public class FourWins extends BoardGame{
                         }
                         if(Points == 4 ){                   //Wurden vier gleiche Zeichen in folge gefunden
                             WinCondition = "Four diagonal -> lower left to upper right";
-                            setWinner(activePlayer,WinCondition,WinCoordinates);                   // Gibt die Schleife den Gewinner zurück
+                            setWinner(activePlayer,WinCondition,WinCoordinates);// Gibt die Schleife den Gewinner zurück
+                            return;
                         }
                     }
                 }

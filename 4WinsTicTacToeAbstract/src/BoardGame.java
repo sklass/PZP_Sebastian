@@ -35,7 +35,7 @@ abstract class BoardGame {
         this.Board.setSize(cols, rows);
         this.Board.initialize(0);
 
-        this.WinCoordinates = new int[2][4];
+        //this.WinCoordinates = new int[2][4];
     }
 
     //Methode zum wechseln des aktiven Spielers
@@ -73,10 +73,10 @@ abstract class BoardGame {
         String ANSI_RED = "\u001B[31m";
         String ANSI_WHITE = "\033[0m";
 
-        for (int y = 1; y < rows + 1; y++) {
+        for (int y = 1; y < rows + 1; y++) { //TODO bei diagonalen ergebenissen von unten links nach oben rechts nicht funktional (in diesem fall müsste vermutlich y rrunter und nicht hoch zählen)
             for (int x = 1; x < cols + 1; x++) {
 
-                if (WinCoordinates != null) {                   //es gibt einen gewinner
+                if (this.WinCoordinates != null) {                   //es gibt einen gewinner
                     if (i > 3) i = 0;
                     if (y == WinCoordinates[0][i] && x == WinCoordinates[1][i]) {   //prüfe ob aktuelle Kkoordinate eine gewinner koordinate ist
                         i++;                                                        //Ist es eine koordinate die zum sieg geführt hat, gib sie rot aus
@@ -175,7 +175,8 @@ abstract class BoardGame {
     protected void setWinner(Player winner, String WindCondition, int[][] WinCoordinates) {
         this.winner = winner;
         this.WinCondition = WindCondition;
-        this.WinCoordinates =WinCoordinates;
+        this.WinCoordinates = new int[2][4];
+        this.WinCoordinates = WinCoordinates;
         this.changeGameState(8);    //Spielstatus 8 -> Gewinner anzeigen
     }
 
