@@ -35,7 +35,8 @@ public class FourWins extends BoardGame{
                 case 6:     //Gewinner  prüfen
                     this.checkRow(4); //Prüfen ob jemand 4 in einer Reihe hat
                     this.checkCol(4); //Prüfen ob jemand 4 in einer Spalte hat
-                    this.checkDiagonale();
+                    this.checkDiagonale();                //Prüfen ob jemand 4 Diagonal hat
+                    this.checkWinner();                   //Prüfen ob eine der obigen bedingungen zugetroffen hat
                     break;
                 case 7:     //Unentschieden prüfen
                     this.checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates()); //Prüfen ob Unentschieden

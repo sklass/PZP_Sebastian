@@ -16,6 +16,7 @@ abstract class BoardGame {
         player1 = new Player();
         player2 = new Player();
         activePlayer = new Player();
+        winner = new Player();
         GameStatus = 0;
         Board = new Board();
         Console = new UserInterface();
@@ -35,7 +36,8 @@ abstract class BoardGame {
         this.Board.setSize(cols, rows);
         this.Board.initialize(0);
 
-        //this.WinCoordinates = new int[2][4];
+        winner = null;
+        WinCoordinates = null;
     }
 
     //Methode zum wechseln des aktiven Spielers
@@ -59,8 +61,7 @@ abstract class BoardGame {
         int cols = this.Board.getCols();      //Board größe, koordinaten der vorhandenen Spielsteine und header ermitteln
         int rows = this.Board.getRows();
         String header = this.Board.getHeader();
-        int[][] coordinates = this.Board.getCoordinates();
-        //das Koordinaten array wird in ein String-Array umgewandelt und ausgegeben
+        int[][] coordinates = this.Board.getCoordinates();        //das Koordinaten array wird in ein String-Array umgewandelt und ausgegeben
         this.Console.PrintBoard(cols, rows, header, interpretCoordinates(coordinates));
     }
 
@@ -69,34 +70,34 @@ abstract class BoardGame {
         int cols = this.Board.getCols();
         String[][] BoardContent = new String[rows + 1][cols + 1];
         int[][] WinCoordinates = this.WinCoordinates;
-        int i = 0;
+        //int i = 0;
         String ANSI_RED = "\u001B[31m";
         String ANSI_WHITE = "\033[0m";
 
-        for (int y = 1; y < rows + 1; y++) { //TODO bei diagonalen ergebenissen von unten links nach oben rechts nicht funktional (in diesem fall müsste vermutlich y rrunter und nicht hoch zählen)
+        for (int y = 1; y < rows + 1; y++) {
             for (int x = 1; x < cols + 1; x++) {
 
                 if (this.WinCoordinates != null) {                   //es gibt einen gewinner
-                    if (i > 3) i = 0;
-                    if (y == WinCoordinates[0][i] && x == WinCoordinates[1][i]) {   //prüfe ob aktuelle Kkoordinate eine gewinner koordinate ist
-                        i++;                                                        //Ist es eine koordinate die zum sieg geführt hat, gib sie rot aus
-                        if (coordinates[y][x] == player1.getPlayerID()) {
-                            BoardContent[y][x] = ANSI_RED + "[ " + player1.getPlayerSymbol() + " ]" + ANSI_WHITE;
-                        } else if (coordinates[y][x] == player2.getPlayerID()) {
-                            BoardContent[y][x] = ANSI_RED + "[ " + player2.getPlayerSymbol() + " ]" + ANSI_WHITE;
-                        } else {
-                            BoardContent[y][x] = "[ " + " " + " ]";
-                        }
-                    } else {                                                          //es gibt einen sieger aber die aktuelle koordinate gehört nicht zur sieger koordinate -> weisse ausgabe
-                        if (coordinates[y][x] == player1.getPlayerID()) { //Symbol gehört Player1
-                            BoardContent[y][x] = "[ " + player1.getPlayerSymbol() + " ]";
-                        } else if (coordinates[y][x] == player2.getPlayerID()) {
-                            BoardContent[y][x] = "[ " + player2.getPlayerSymbol() + " ]";
-                        } else {
-                            BoardContent[y][x] = "[ " + " " + " ]";
+                    for(int i = 0; i < 4; i++){
+                        if (y == WinCoordinates[0][i] && x == WinCoordinates[1][i]) {   //prüfe ob aktuelle Kkoordinate eine gewinner koordinate ist
+                            if (coordinates[y][x] == player1.getPlayerID()) {
+                                BoardContent[y][x] = ANSI_RED + "[ " + player1.getPlayerSymbol() + " ]" + ANSI_WHITE;   //Wenn ja, rot markieren und danach in weiss weiter
+                                break;  //Schleife nach eintragung einer Gewinner koordinate unterbrechen, sonst wird sie wieder ohne markierung überschrieben
+                            } else if (coordinates[y][x] == player2.getPlayerID()) {
+                                BoardContent[y][x] = ANSI_RED + "[ " + player2.getPlayerSymbol() + " ]" + ANSI_WHITE;
+                                break;  //Schleife nach eintragung einer Gewinner koordinate unterbrechen, sonst wird sie wieder ohne markierung überschrieben
+                            }
+                        } else { //es gibt einen sieger aber die aktuelle koordinate gehört nicht zur sieger koordinate -> weisse ausgabe
+                            if (coordinates[y][x] == player1.getPlayerID()) { //Symbol gehört Player1
+                                BoardContent[y][x] = "[ " + player1.getPlayerSymbol() + " ]";
+                            } else if (coordinates[y][x] == player2.getPlayerID()) {
+                                BoardContent[y][x] = "[ " + player2.getPlayerSymbol() + " ]";
+                            } else {
+                                BoardContent[y][x] = "[ " + " " + " ]";
+                            }
                         }
                     }
-                } else {                                                            //es gibt keinen sieger, alles normal ausgeben
+                } else {                                                            //es gibt keinen sieger, spieler symbole ohne farbige markierung als String speichern
                     if (coordinates[y][x] == player1.getPlayerID()) {
                         BoardContent[y][x] = "[ " + player1.getPlayerSymbol() + " ]";
                     } else if (coordinates[y][x] == player2.getPlayerID()) {
@@ -137,7 +138,8 @@ abstract class BoardGame {
                 }
                 if (Points == AmountofSymbolsToWin) {                   //Wurden vier gleiche Zeichen in folge gefunden
                     WinCondition = AmountofSymbolsToWin + " in one row";
-                    setWinner(activePlayer, WinCondition, WinCoordinates);                  // Gibt die Schleife den Gewinner zurück
+                    setWinner(activePlayer, WinCondition, WinCoordinates);                   // Gibt die Schleife den Gewinner zurück
+                    return;
                 }
             }
             Points = 0;
@@ -164,8 +166,7 @@ abstract class BoardGame {
                 if (Points == AmountofSymbolsToWin) {                   //Wurden vier gleiche Zeichen in folge gefunden
                     WinCondition = AmountofSymbolsToWin + " in one Column";
                     setWinner(activePlayer, WinCondition, WinCoordinates);                   // Gibt die Schleife den Gewinner zurück
-                }else{
-                    this.changeGameState(7);    //Wenn kein gewinner mit programm fortfahren
+                    return;
                 }
             }
             Points = 0;                           //Nach jeder Spalte wird der Punktezähler zurückgesetzt
@@ -177,7 +178,13 @@ abstract class BoardGame {
         this.WinCondition = WindCondition;
         this.WinCoordinates = new int[2][4];
         this.WinCoordinates = WinCoordinates;
-        this.changeGameState(8);    //Spielstatus 8 -> Gewinner anzeigen
+
+    }
+
+    protected void checkWinner(){
+        if(this.winner != null){
+            this.changeGameState(8);    //Spielstatus 8 -> Gewinner anzeigen
+        }else this.changeGameState(7); //auf Unentschieden prüfen
     }
 
     protected void showWinner() {
