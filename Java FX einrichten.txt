@@ -16,4 +16,14 @@
 15.Ok klicken
 16. Programm starten und testen ob ein Fenster angezeigt wird :)
 
+Extra: JavaFX Scene Builder 11 installieren
+
+1. Download des SceneBuilders: https://gluonhq.com/products/scene-builder/thanks/?dl=/download/scene-builder-11-windows-x64/
+2. In IntelliJ File -> Setting -> Languages & Frameworks -> JavaFX
+3. Bei "Path to SceneBuilder" -> den entsprechenden Pfad angeben z.B.: C:\Program Files\SceneBuilder\SceneBuilder.exe
+4. OK
+5. In einem JavaFX Projekt unter "src" die Datei mit der Endung ".fxml" anklicken. Unterhalb des Editor-Bereichs gibt es jetzt einen neuen Reiter "SceneBuilder"
+
+
+
 
