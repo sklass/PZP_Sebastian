@@ -1,4 +1,4 @@
-public class Player {
+public class Player { //Klasse für die Spieler
     private int ID;
     private char symbol;
     private int Points;

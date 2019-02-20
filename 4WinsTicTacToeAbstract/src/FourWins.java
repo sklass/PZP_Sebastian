@@ -1,4 +1,4 @@
-public class FourWins extends BoardGame{
+public class FourWins extends BoardGame{ //Klasse FourWins wird von der abstrakten klasse BoardGame abgeleitet
 
 
     void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten

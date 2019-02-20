@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class UserInterface {
+public class UserInterface { //Klasse für die Ein und Ausgaben
     void print(String Text){
         System.out.println(Text);
     }
