@@ -1,0 +1,19 @@
+1. JAVA FX 11 für Windows runterladen: http://gluonhq.com/download/javafx-11-0-2-sdk-windows/
+2. Entpacken nach C:\Program Files\Java 
+3. Ergebnis sollte das Verzeichnis C:\Program Files\Java\javafx-sdk-11.0.2 sein, welches die Verzeichnisse bin, legal und lib beinhaltet
+4. Intelli J -> File -> new -> Project
+5. JavaFX -> JavaFX Application -> next -> Projektname eingeben -> Finish
+6. File -> Settings -> PathVariables -> kleines Plus oben rechts anklicken (add)
+7. Name: FX
+8. Value: C:\Program Files\Java\javafx-sdk-11.0.2
+9. OK klicken
+10. File -> Project Structure -> Modules -> kleines plus oben rechts anklicken (add)
+11. library -> java -> Pfad eingeben : C:\Program Files\Java\javafx-sdk-11.0.2\lib
+12. OK klicken
+13. Oben auf "Run" klicken -> "Edit Configuration"
+14. Bei VM options folgendes Eintragen: 
+	--module-path ${FX} --add-modules=javafx.controls,javafx.fxml
+15.Ok klicken
+16. Programm starten und testen ob ein Fenster angezeigt wird :)
+
+
