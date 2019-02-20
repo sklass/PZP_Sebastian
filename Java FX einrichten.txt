@@ -3,12 +3,12 @@
 3. Ergebnis sollte das Verzeichnis C:\Program Files\Java\javafx-sdk-11.0.2 sein, welches die Verzeichnisse bin, legal und lib beinhaltet
 4. Intelli J -> File -> new -> Project
 5. JavaFX -> JavaFX Application -> next -> Projektname eingeben -> Finish
-6. File -> Settings -> PathVariables -> kleines Plus oben rechts anklicken (add)
+6. File -> Settings -> Appearance & Behavior -> PathVariables -> kleines Plus oben rechts anklicken (add)
 7. Name: FX
-8. Value: C:\Program Files\Java\javafx-sdk-11.0.2
+8. Value: C:\Program Files\Java\javafx-sdk-11.0.2\lib
 9. OK klicken
-10. File -> Project Structure -> Modules -> kleines plus oben rechts anklicken (add)
-11. library -> java -> Pfad eingeben : C:\Program Files\Java\javafx-sdk-11.0.2\lib
+10. File -> Project Structure -> Modules -> Dependencies -> kleines plus oben rechts anklicken (add)
+11. "jars or directorys" -> Pfad eingeben : C:\Program Files\Java\javafx-sdk-11.0.2\lib
 12. OK klicken
 13. Oben auf "Run" klicken -> "Edit Configuration"
 14. Bei VM options folgendes Eintragen: 

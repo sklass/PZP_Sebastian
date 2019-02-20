@@ -7,18 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$FX$" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$FX$" />
-        </SOURCES>
-        <jarDirectory url="file://$FX$" recursive="false" />
-        <jarDirectory url="file://$FX$" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="javafx-sdk-11.0" level="project" />
   </component>
 </module>
