@@ -23,9 +23,14 @@ public class UserInterface {
 
     }
 
-    void printWinner(char WinningPlyerSymbol, String WinCondition){
-        System.out.println("Congrats, Player "+ WinningPlyerSymbol +" has won the game");
+    void printWinner(char WinningPlayerSymbol, String WinCondition){
+        System.out.println("Congrats, Player "+ WinningPlayerSymbol +" has won the game");
         System.out.println(WinCondition);
+    }
+
+    void printPlayerPoints(Player player1, Player player2){
+        System.out.println("Player " + player1.getPlayerSymbol() + " has won " + player1.getPoints() + " game(s)");
+        System.out.println("Player " + player2.getPlayerSymbol() + " has won " + player2.getPoints() + " game(s)");
     }
 
     void printDraw(){

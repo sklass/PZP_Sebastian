@@ -1,6 +1,7 @@
 public class Player {
     private int ID;
     private char symbol;
+    private int Points;
 
     void setPlayerID(int playerID){
         this.ID =  playerID;
@@ -14,5 +15,12 @@ public class Player {
     char getPlayerSymbol(){
         return this.symbol;
     }
+    int getPoints() {
+        return Points;
+    }
+    void increasePoints() {
+        this.Points++;
+    }
+
 
 }

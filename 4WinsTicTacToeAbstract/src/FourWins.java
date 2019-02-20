@@ -1,9 +1,7 @@
 public class FourWins extends BoardGame{
-    void start(){
-        this.GameStateHandler();    //Ruft den Zustandsautomaten auf
-    }
 
-    private void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten
+
+    void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten
 
         while(GameStatus <=10){
             switch(GameStatus){
@@ -62,7 +60,7 @@ public class FourWins extends BoardGame{
     }
 
     //Methode um neuen Spielstein aufs Feld zu setzen
-    private void makeAMove(){
+    void makeAMove(){
         int col = this.askColumn();                                     //Der User wird nach einer Spalte gefragt
         this.Board.setCoordinates(newMove(col,this.activePlayer)); //Eingegebene Spalte und aktiver Spieler werden an newMove übergeben
         //NewMove prüft die spalte ob platz ist, und trägt das Spielersymbol ein
@@ -105,7 +103,7 @@ public class FourWins extends BoardGame{
         return coordinates;
     }
 
-    private void checkDiagonale(){
+    void checkDiagonale(){
         int rows = this.Board.getRows();
         //int cols = this.Board.getCols();
         int[][] coordinates = this.Board.getCoordinates();

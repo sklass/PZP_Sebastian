@@ -11,6 +11,10 @@ abstract class BoardGame {
     protected Board Board;
     protected UserInterface Console;
 
+    //zwingt die instanzen der Klasse BoardGame die folgenden Methoden zu definierenk
+    abstract void GameStateHandler();
+    abstract void makeAMove();
+    abstract void checkDiagonale();
 
     public BoardGame() {
         player1 = new Player();
@@ -20,6 +24,9 @@ abstract class BoardGame {
         GameStatus = 0;
         Board = new Board();
         Console = new UserInterface();
+    }
+    void start(){
+        this.GameStateHandler();    //Ruft den Zustandsautomaten auf
     }
 
     protected void changeGameState(int newGameState) {
@@ -183,13 +190,23 @@ abstract class BoardGame {
 
     protected void checkWinner(){
         if(this.winner != null){
+            this.increaseWinningPlayerPoints();       //Punkt des Spielers der gewonnen hat um eins erhöhen
             this.changeGameState(8);    //Spielstatus 8 -> Gewinner anzeigen
         }else this.changeGameState(7); //auf Unentschieden prüfen
     }
 
+    protected void increaseWinningPlayerPoints(){
+        if(this.winner.getPlayerID() == 1){
+            this.player1.increasePoints();
+        }else{
+            this.player2.increasePoints();
+        }
+    }
+
     protected void showWinner() {
         this.showBoard();
-        Console.printWinner(this.winner.getPlayerSymbol(), this.WinCondition);
+        this.Console.printWinner(this.winner.getPlayerSymbol(), this.WinCondition);
+        this.Console.printPlayerPoints(this.player1, this.player2);
     }
 
     protected void checkDraw(int rows, int cols, int[][] coordinates){            //Methode zur Prüfung bo es noch freie felder auf dem spielfeld gibt -> True bei unentschieden
@@ -213,7 +230,7 @@ abstract class BoardGame {
         if ( Console.askPlayAgain() == 1){
             this.changeGameState(1); //Spiel neu initialisieren
         }else{
-            this.changeGameState(6); //Spiel beenden
+            this.changeGameState(11); //Spiel beenden
         }
     }
 

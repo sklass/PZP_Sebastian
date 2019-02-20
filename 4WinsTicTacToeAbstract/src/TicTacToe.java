@@ -1,10 +1,6 @@
 public class TicTacToe extends BoardGame{
 
-    void start(){
-        this.GameStateHandler();    //Ruft den Zustandsautomaten auf
-    }
-
-    private void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten
+     void GameStateHandler(){ //Zustandsautomat zuständig für die Regelung des Spielablaufs in Schritten
 
         while(GameStatus <=10){
             switch(GameStatus){
@@ -37,6 +33,7 @@ public class TicTacToe extends BoardGame{
                     this.checkRow(4); //Prüfen ob jemand 3 in einer Reihe hat
                     this.checkCol(4); //Prüfen ob jemand 3 in einer Spalte hat
                     this.checkDiagonale();
+                    this.checkWinner();
                     break;
                 case 7:     //Unentschieden prüfen
                     this.checkDraw(Board.getRows(), Board.getCols(), Board.getCoordinates()); //Prüfen ob Unentschieden
@@ -62,7 +59,7 @@ public class TicTacToe extends BoardGame{
     }
 
     //Methode um neuen Spielstein aufs Feld zu setzen
-    private void makeAMove(){
+    void makeAMove(){
         int[][] coordinates = this.Board.getCoordinates();  //Array mit bisherigen Spielsteinen holen
         int[] validAnswers = new int[]{1,2,3};
 
@@ -80,15 +77,15 @@ public class TicTacToe extends BoardGame{
         this.Board.setCoordinates(coordinates); //Das aktuelle Koordinaten array wird ans Board zurückgegeben
     }
 
-    private void checkDiagonale(){
+    void checkDiagonale(){
         int rows = this.Board.getRows();
         int cols = this.Board.getCols();
         int coordinates[][] = this.Board.getCoordinates();
         //drei diagonale von links unten nach rechts oben
         int Points1 = 0;
         int Points2 = 0;
-        int[][] WinCoordinates1 = new int[2][3];       //Speichert die position des Spielsteins in einem Array
-        int[][] WinCoordinates2 = new int[2][3];
+        int[][] WinCoordinates1 = new int[2][4];       //Speichert die position des Spielsteins in einem Array
+        int[][] WinCoordinates2 = new int[2][4];
 
         for(int i = 1; i <=3; i++) {
             if(coordinates[i][i] == this.activePlayer.getPlayerID()) { //1-1 2-2 3-3 -> Von oben links nach unten rechts
